@@ -28,8 +28,20 @@ type Lista[T any] interface {
 
 	// Iterar recorre la lista desde el primero al último elemento, aplicando la función dada a cada uno de ellos.
 	// Si la función devuelve false, se detiene la iteración. Si devuelve true, se continúa con el siguiente elemento.
-	Iterar(func(T) bool)
+	Iterar(visitar func(T) bool)
 
 	// Iterador devuelve un iterador que recorre la lista desde el primero al último elemento.
 	Iterador() IteradorLista[T]
+}
+
+type IteradorLista[T any] interface {
+	VerActual() T
+
+	HayAlgoMas() bool
+
+	Avanzar()
+
+	Insertar(T)
+
+	Borrar() T
 }
