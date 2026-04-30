@@ -40,3 +40,35 @@ func (l *listaEnlazada[T]) InsertarUltimo(valor T) {
 	}
 	l.ultimo = nuevoNodo
 }
+
+func (l *listaEnlazada[T]) BorrarPrimero() T {
+	if l.EstaVacia() {
+		panic("La lista esta vacia")
+	}
+	valor := l.primero.dato
+	l.primero = l.primero.sig
+	if l.primero == nil {
+		l.ultimo = l.primero
+	}
+	return valor
+}
+
+func (l *listaEnlazada[T]) VerPrimero() T {
+	if l.EstaVacia() {
+		panic("La lista esta vacia")
+	}
+	valor := l.primero.dato
+	return valor
+}
+
+func (l *listaEnlazada[T]) VerUltimo() T {
+	if l.EstaVacia() {
+		panic("La lista esta vacia")
+	}
+	valor := l.ultimo.dato
+	return valor
+}
+
+func (l *listaEnlazada[T]) Largo() int {
+	return l.largo
+}
