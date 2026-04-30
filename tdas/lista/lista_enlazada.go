@@ -72,3 +72,11 @@ func (l *listaEnlazada[T]) VerUltimo() T {
 func (l *listaEnlazada[T]) Largo() int {
 	return l.largo
 }
+
+func (l *listaEnlazada[T]) Iterar(visitar func(T) bool) {
+
+}
+
+func (l *listaEnlazada[T]) Iterador() IteradorLista[T] {
+
+}
