@@ -35,13 +35,18 @@ type Lista[T any] interface {
 }
 
 type IteradorLista[T any] interface {
+	//VerActual devuelve el valor del elemento actual del iterador. Si el iterador no tiene un elemento actual, entra en pánico con un mensaje "El iterador termino de iterar".
 	VerActual() T
 
+	//HayAlgoMas devuelve verdadero si el iterador tiene un elemento actual, false en caso contrario.
 	HayAlgoMas() bool
 
+	//Avanzar mueve el iterador al siguiente elemento. Si el iterador no tiene más elementos, entra en pánico con un mensaje "El iterador termino de iterar".
 	Avanzar()
 
+	//Insertar inserta un nuevo elemento en la posición actual del iterador.
 	Insertar(T)
 
+	//Borrar borra el elemento actual del iterador. Si el iterador no tiene más elementos, entra en pánico con un mensaje "El iterador termino de iterar".
 	Borrar() T
 }

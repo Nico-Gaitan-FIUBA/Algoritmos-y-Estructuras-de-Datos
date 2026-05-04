@@ -92,6 +92,9 @@ func (l *listaEnlazada[T]) Iterador() IteradorLista[T] {
 }
 
 func (i *iteradorLista[T]) VerActual() T {
+	if i.actual == nil {
+		panic("El iterador termino de iterar")
+	}
 	return i.actual.dato
 }
 
@@ -119,7 +122,11 @@ func (i *iteradorLista[T]) Insertar(valor T) {
 }
 
 func (i *iteradorLista[T]) Borrar() T {
-	return
+	if i.actual == nil {
+		panic("El iterador termino de iterar")
+	}
+
+	return i.actual.dato
 }
 
 func (l *listaEnlazada[T]) Iterar(visitar func(T) bool) {
