@@ -86,9 +86,10 @@ func (l *listaEnlazada[T]) Largo() int {
 //iteradores
 
 func (l *listaEnlazada[T]) Iterador() IteradorLista[T] {
-	IteradorLista.actual = l.primero
-	iteradorLista.anterior = nil
-	return &IteradorLista[T]{}
+	iterador := &iteradorLista[T]{}
+	iterador.actual = l.primero
+	iterador.anterior = nil
+	return iterador
 }
 
 func (i *iteradorLista[T]) VerActual() T {
@@ -113,12 +114,16 @@ func (i *iteradorLista[T]) Avanzar() {
 }
 
 func (i *iteradorLista[T]) Insertar(valor T) {
-	nuevoNodo := &nodo[T]{dato: valor}
-	aux := i.actual
-	i.actual = nuevoNodo
-	i.anterior.sig = nuevoNodo
-	i.siguiente = aux
-
+	if i.anterior == nil {
+		i.lista.InsertarPrimero(valor)
+	} else {
+		nuevoNodo := &nodo[T]{dato: valor}
+		aux := i.actual
+		i.actual = nuevoNodo
+		i.anterior.sig = nuevoNodo
+		i.siguiente = aux
+	}
+	i.lista.largo++
 }
 
 func (i *iteradorLista[T]) Borrar() T {
