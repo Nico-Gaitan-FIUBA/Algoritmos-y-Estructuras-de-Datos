@@ -12,10 +12,9 @@ type listaEnlazada[T any] struct {
 }
 
 type iteradorLista[T any] struct {
-	actual    *nodo[T]
-	siguiente *nodo[T]
-	anterior  *nodo[T]
-	lista     *listaEnlazada[T]
+	actual   *nodo[T]
+	anterior *nodo[T]
+	lista    *listaEnlazada[T]
 }
 
 func CrearListaEnlazada[T any]() Lista[T] {
@@ -87,6 +86,7 @@ func (l *listaEnlazada[T]) Largo() int {
 
 func (l *listaEnlazada[T]) Iterador() IteradorLista[T] {
 	iterador := &iteradorLista[T]{}
+	iterador.lista = l
 	iterador.actual = l.primero
 	iterador.anterior = nil
 	return iterador
@@ -104,33 +104,40 @@ func (i *iteradorLista[T]) HayAlgoMas() bool {
 }
 
 func (i *iteradorLista[T]) Avanzar() {
-	if i.siguiente == nil {
+	if i.actual.sig == nil {
 		panic("El iterador termino de iterar")
 	}
 	actualAux := i.actual
 	i.anterior = actualAux
-	i.actual = i.siguiente
-	i.siguiente = i.siguiente.sig
+	i.actual = i.actual.sig
 }
 
 func (i *iteradorLista[T]) Insertar(valor T) {
 	if i.anterior == nil {
 		i.lista.InsertarPrimero(valor)
+		i.actual = i.anterior
+	} else if !i.HayAlgoMas() {
+		i.lista.InsertarUltimo(valor)
+		i.actual = i.actual.sig
 	} else {
 		nuevoNodo := &nodo[T]{dato: valor}
 		aux := i.actual
 		i.actual = nuevoNodo
 		i.anterior.sig = nuevoNodo
-		i.siguiente = aux
+		i.actual.sig = aux
+		i.lista.largo++
 	}
-	i.lista.largo++
 }
 
 func (i *iteradorLista[T]) Borrar() T {
 	if i.actual == nil {
 		panic("El iterador termino de iterar")
 	}
-
+	if i.anterior == nil {
+		i.lista.BorrarPrimero()
+	} else if !i.HayAlgoMas() {
+		i.lista.ultimo = i.anterior
+	}
 	return i.actual.dato
 }
 
