@@ -112,48 +112,44 @@ func (i *iteradorLista[T]) Avanzar() {
 }
 
 func (i *iteradorLista[T]) Insertar(valor T) {
+	nuevoNodo := &nodo[T]{dato: valor}
+
+	nuevoNodo.sig = i.actual
+
 	if i.anterior == nil {
-		i.lista.InsertarPrimero(valor)
-		i.actual = i.lista.primero
-		i.anterior = nil
-	} else if !i.HayAlgoMas() {
-		i.lista.InsertarUltimo(valor)
-		aux := i.anterior
-		i.actual = i.lista.ultimo
-		i.anterior = aux
-		i.actual.sig = nil
+		i.lista.primero = nuevoNodo
 	} else {
-		nuevoNodo := &nodo[T]{dato: valor}
-		aux := i.actual
-		i.actual = nuevoNodo
 		i.anterior.sig = nuevoNodo
-		i.actual.sig = aux
-		i.lista.largo++
 	}
+
+	if i.actual == nil {
+		i.lista.ultimo = nuevoNodo
+	}
+
+	i.actual = nuevoNodo
+	i.lista.largo++
 }
 
 func (i *iteradorLista[T]) Borrar() T {
 	if i.actual == nil {
 		panic("El iterador termino de iterar")
 	}
+
 	valor := i.actual.dato
+
 	if i.anterior == nil {
-		i.lista.BorrarPrimero()
-		i.actual = i.lista.primero
-		i.anterior = nil
-	} else if i.actual.sig == nil {
-		i.lista.ultimo = i.anterior
-		i.actual = nil
-		i.anterior = i.lista.ultimo
-		i.anterior.sig = i.actual
-		i.lista.largo--
+		i.lista.primero = i.actual.sig
 	} else {
-		aux := i.anterior
-		i.actual = i.actual.sig
-		i.anterior = aux
-		i.anterior.sig = i.actual
-		i.lista.largo--
+		i.anterior.sig = i.actual.sig
 	}
+
+	if i.actual.sig == nil {
+		i.lista.ultimo = i.anterior
+	}
+
+	i.actual = i.actual.sig
+	i.lista.largo--
+
 	return valor
 }
 
