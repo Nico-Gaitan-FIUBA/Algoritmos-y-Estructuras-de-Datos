@@ -104,21 +104,24 @@ func (i *iteradorLista[T]) HayAlgoMas() bool {
 }
 
 func (i *iteradorLista[T]) Avanzar() {
-	if i.actual.sig == nil {
+	if i.actual == nil {
 		panic("El iterador termino de iterar")
 	}
-	actualAux := i.actual
-	i.anterior = actualAux
+	i.anterior = i.actual
 	i.actual = i.actual.sig
 }
 
 func (i *iteradorLista[T]) Insertar(valor T) {
 	if i.anterior == nil {
 		i.lista.InsertarPrimero(valor)
-		i.actual = i.anterior
+		i.actual = i.lista.primero
+		i.anterior = nil
 	} else if !i.HayAlgoMas() {
 		i.lista.InsertarUltimo(valor)
-		i.actual = i.actual.sig
+		aux := i.anterior
+		i.actual = i.lista.ultimo
+		i.anterior = aux
+		i.actual.sig = nil
 	} else {
 		nuevoNodo := &nodo[T]{dato: valor}
 		aux := i.actual
@@ -133,14 +136,31 @@ func (i *iteradorLista[T]) Borrar() T {
 	if i.actual == nil {
 		panic("El iterador termino de iterar")
 	}
+	valor := i.actual.dato
 	if i.anterior == nil {
 		i.lista.BorrarPrimero()
-	} else if !i.HayAlgoMas() {
+		i.actual = i.lista.primero
+		i.anterior = nil
+	} else if i.actual.sig == nil {
 		i.lista.ultimo = i.anterior
+		i.actual = nil
+		i.anterior = i.lista.ultimo
+		i.anterior.sig = i.actual
+		i.lista.largo--
+	} else {
+		aux := i.anterior
+		i.actual = i.actual.sig
+		i.anterior = aux
+		i.anterior.sig = i.actual
+		i.lista.largo--
 	}
-	return i.actual.dato
+	return valor
 }
 
 func (l *listaEnlazada[T]) Iterar(visitar func(T) bool) {
-	return true
+	for i := l.primero; i != nil; i = i.sig {
+		if !visitar(i.dato) {
+			break
+		}
+	}
 }

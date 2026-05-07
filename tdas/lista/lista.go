@@ -2,7 +2,7 @@ package lista
 
 type Lista[T any] interface {
 
-	// EstaVacia devuelve verdadero si la lista no tiene elementos, false en caso contrario.
+	// EstaVacia devuelve true si la lista no tiene elementos, false en caso contrario.
 	EstaVacia() bool
 
 	// InsertarPrimero agrega un nuevo elemento al inicio de la lista.
@@ -30,7 +30,7 @@ type Lista[T any] interface {
 	// Si la función devuelve false, se detiene la iteración. Si devuelve true, se continúa con el siguiente elemento.
 	Iterar(visitar func(T) bool)
 
-	// Iterador devuelve un iterador que recorre la lista desde el primero al último elemento.
+	// Iterador devuelve un iterador externo posicionado en el primer elemento de la lista.
 	Iterador() IteradorLista[T]
 }
 
@@ -38,7 +38,7 @@ type IteradorLista[T any] interface {
 	//VerActual devuelve el valor del elemento actual del iterador. Si el iterador no tiene un elemento actual, entra en pánico con un mensaje "El iterador termino de iterar".
 	VerActual() T
 
-	//HayAlgoMas devuelve verdadero si el iterador tiene un elemento actual, false en caso contrario.
+	//HayAlgoMas devuelve true si el iterador tiene un elemento actual, false en caso contrario.
 	HayAlgoMas() bool
 
 	//Avanzar mueve el iterador al siguiente elemento. Si el iterador no tiene más elementos, entra en pánico con un mensaje "El iterador termino de iterar".
@@ -47,6 +47,6 @@ type IteradorLista[T any] interface {
 	//Insertar inserta un nuevo elemento en la posición actual del iterador.
 	Insertar(T)
 
-	//Borrar borra el elemento actual del iterador. Si el iterador no tiene más elementos, entra en pánico con un mensaje "El iterador termino de iterar".
+	//Borrar borra el elemento actual del iterador y devuelve su valor. Si el iterador no tiene más elementos, entra en pánico con un mensaje "El iterador termino de iterar".
 	Borrar() T
 }
