@@ -11,7 +11,7 @@ type Lista[T any] interface {
 	// InsertarUltimo agrega un nuevo elemento al final de la lista.
 	InsertarUltimo(T)
 
-	// BorrarPrimero saca el primer elemento de la lista. Si la lista tiene elementos, se quita el primero de la misma,
+	// BorrarPrimero saca el primer elemento de la lista y devuelve su valor. Si la lista tiene elementos, se quita el primero de la misma,
 	// y se devuelve ese valor. Si está vacía, entra en pánico con un mensaje "La lista esta vacia".
 	BorrarPrimero() T
 
@@ -38,7 +38,7 @@ type IteradorLista[T any] interface {
 	//VerActual devuelve el valor del elemento actual del iterador. Si el iterador no tiene un elemento actual, entra en pánico con un mensaje "El iterador termino de iterar".
 	VerActual() T
 
-	//HayAlgoMas devuelve true si el iterador tiene un elemento actual, false en caso contrario.
+	//HayAlgoMas devuelve true si el iterador tiene más elementos, false en caso contrario.
 	HayAlgoMas() bool
 
 	//Avanzar mueve el iterador al siguiente elemento. Si el iterador no tiene más elementos, entra en pánico con un mensaje "El iterador termino de iterar".
