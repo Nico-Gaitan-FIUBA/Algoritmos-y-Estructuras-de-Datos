@@ -135,6 +135,29 @@ func (h *hashAbierto[K, V]) Obtener(clave K) V {
 	panic("La clave no pertenece al diccionario")
 }
 
+func (h *hashAbierto[K, V]) Borrar(clave K) V {
+	claveHash := JenkinsHash(string(convertirABytes(clave)), h.tam)
+	lista := h.tabla[claveHash]
+
+	if lista == nil {
+		panic("La clave no pertenece al diccionario")
+	}
+
+	for iter := lista.Iterador(); iter.HayAlgoMas(); iter.Avanzar() {
+		if iter.VerActual().clave == clave {
+			elemento := iter.Borrar()
+			valorBorrado := elemento.valor
+			h.cantidad--
+			if h.cantidad == h.tam/2 {
+				h.redimensionar(h.tam / FACTOR_REDIMENSION)
+			}
+			return valorBorrado
+		}
+	}
+
+	panic("La clave no pertenece al diccionario")
+}
+
 func (h *hashAbierto[K, V]) Cantidad() int {
 	return h.cantidad
 }
