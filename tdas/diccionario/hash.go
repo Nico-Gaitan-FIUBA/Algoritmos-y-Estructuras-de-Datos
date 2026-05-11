@@ -96,6 +96,24 @@ func (h *hashAbierto[K, V]) Pertenece(clave K) bool {
 	return pertenece
 }
 
+func (h *hashAbierto[K, V]) Obtener(clave K) V {
+	claveHash := JenkinsHash(string(convertirABytes(clave)), h.tam)
+	lista := h.tabla[claveHash]
+
+	if lista == nil {
+		panic("La clave no pertenece al diccionario")
+	}
+
+	lista.Iterar(func(par parClaveValor[K, V]) bool {
+		if par.clave == clave {
+			resultado := par.valor
+			return false
+		}
+		return true
+	})
+	return resultado
+}
+
 func (h *hashAbierto[K, V]) Cantidad() int {
 	return h.cantidad
 }
