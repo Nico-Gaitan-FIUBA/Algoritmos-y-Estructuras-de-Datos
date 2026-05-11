@@ -6,6 +6,7 @@ import (
 )
 
 const (
+	CARGA_MAX          = 2
 	TAMANO_INICIAL     = 11
 	CANTIDAD_INICIAL   = 0
 	FACTOR_REDIMENSION = 2
@@ -68,15 +69,37 @@ func (h *hashAbierto[K, V]) redimensionar(tam int) {
 	h.tam = tam
 }
 
+func (h *hashAbierto[K, V]) actualizarValor(lista TDALista.Lista[parClaveValor[K, V]], clave K, dato V) bool {
+	for iter := lista.Iterador(); iter.HayAlgoMas(); iter.Avanzar() {
+		if iter.VerActual().clave == clave {
+			iter.Borrar()
+			iter.Insertar(parClaveValor[K, V]{clave: clave, valor: dato})
+			return true
+		}
+	}
+	return false
+}
+
 func (h *hashAbierto[K, V]) Guardar(clave K, dato V) {
+
 	claveHash := JenkinsHash(string(convertirABytes(clave)), h.tam)
 	lista := h.tabla[claveHash]
-	if h.Pertenece(clave) {
 
-	} else {
-
+	if lista == nil {
+		lista = TDALista.CrearListaEnlazada[parClaveValor[K, V]]()
+		h.tabla[claveHash] = lista
+	}
+	if h.actualizarValor(lista, clave, dato) {
+		return
 	}
 
+	lista.InsertarUltimo(parClaveValor[K, V]{clave: clave, valor: dato})
+	h.cantidad++
+
+	if h.cantidad/h.tam == CARGA_MAX {
+		h.redimensionar(h.tam * FACTOR_REDIMENSION)
+
+	}
 }
 
 func (h *hashAbierto[K, V]) Pertenece(clave K) bool {
