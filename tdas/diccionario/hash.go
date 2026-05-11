@@ -161,3 +161,7 @@ func (h *hashAbierto[K, V]) Borrar(clave K) V {
 func (h *hashAbierto[K, V]) Cantidad() int {
 	return h.cantidad
 }
+
+func (h *hashAbierto[K, V]) Iterar(func(clave K, dato V) bool) {
+
+}
