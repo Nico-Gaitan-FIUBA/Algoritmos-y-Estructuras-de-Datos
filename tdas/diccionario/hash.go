@@ -6,8 +6,9 @@ import (
 )
 
 const (
-	TAMANO_INICIAL   = 11
-	CANTIDAD_INICIAL = 0
+	TAMANO_INICIAL     = 11
+	CANTIDAD_INICIAL   = 0
+	FACTOR_REDIMENSION = 2
 )
 
 type parClaveValor[K comparable, V any] struct {
@@ -29,11 +30,11 @@ func CrearHash[K comparable, V any]() Diccionario[K, V] {
 	}
 }
 
-func JenkinsHash(key string) uint32 {
+func JenkinsHash(clave string, tam int) uint32 {
 	var hash uint32 = 0
 
-	for i := 0; i < len(key); i++ {
-		hash += uint32(key[i])
+	for i := 0; i < len(clave); i++ {
+		hash += uint32(clave[i])
 		hash += hash << 10
 		hash ^= hash >> 6
 	}
@@ -42,15 +43,33 @@ func JenkinsHash(key string) uint32 {
 	hash ^= hash >> 11
 	hash += hash << 15
 
-	return hash % TAMANO_INICIAL
+	return hash % uint32(tam)
 }
 
 func convertirABytes[K comparable](clave K) []byte {
 	return []byte(fmt.Sprintf("%v", clave))
 }
 
+func (h *hashAbierto[K, V]) redimensionar(tam int) {
+	nuevaTabla := make([]TDALista.Lista[parClaveValor[K, V]], tam)
+	for _, lista := range h.tabla {
+		if lista != nil {
+			lista.Iterar(func(par parClaveValor[K, V]) bool {
+				claveHash := JenkinsHash(string(convertirABytes(par.clave)), tam)
+				if nuevaTabla[claveHash] == nil {
+					nuevaTabla[claveHash] = TDALista.CrearListaEnlazada[parClaveValor[K, V]]()
+				}
+				nuevaTabla[claveHash].InsertarUltimo(parClaveValor[K, V]{clave: par.clave, valor: par.valor})
+				return true
+			})
+		}
+	}
+	h.tabla = nuevaTabla
+	h.tam = tam
+}
+
 func (h *hashAbierto[K, V]) Guardar(clave K, dato V) {
-	claveHash := JenkinsHash(string(convertirABytes(clave)))
+	claveHash := JenkinsHash(string(convertirABytes(clave)), h.tam)
 	lista := h.tabla[claveHash]
 	if h.Pertenece(clave) {
 
@@ -61,7 +80,7 @@ func (h *hashAbierto[K, V]) Guardar(clave K, dato V) {
 }
 
 func (h *hashAbierto[K, V]) Pertenece(clave K) bool {
-	claveHash := JenkinsHash(string(convertirABytes(clave)))
+	claveHash := JenkinsHash(string(convertirABytes(clave)), h.tam)
 	lista := h.tabla[claveHash]
 	if lista == nil {
 		return false
@@ -75,4 +94,8 @@ func (h *hashAbierto[K, V]) Pertenece(clave K) bool {
 		return true
 	})
 	return pertenece
+}
+
+func (h *hashAbierto[K, V]) Cantidad() int {
+	return h.cantidad
 }
