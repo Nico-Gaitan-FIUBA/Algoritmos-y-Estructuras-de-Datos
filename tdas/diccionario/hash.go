@@ -127,14 +127,12 @@ func (h *hashAbierto[K, V]) Obtener(clave K) V {
 		panic("La clave no pertenece al diccionario")
 	}
 
-	lista.Iterar(func(par parClaveValor[K, V]) bool {
-		if par.clave == clave {
-			resultado := par.valor
-			return false
+	for iter := lista.Iterador(); iter.HayAlgoMas(); iter.Avanzar() {
+		if iter.VerActual().clave == clave {
+			return iter.VerActual().valor
 		}
-		return true
-	})
-	return resultado
+	}
+	panic("La clave no pertenece al diccionario")
 }
 
 func (h *hashAbierto[K, V]) Cantidad() int {
