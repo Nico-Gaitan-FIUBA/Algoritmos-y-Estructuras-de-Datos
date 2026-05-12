@@ -23,6 +23,12 @@ type hashAbierto[K comparable, V any] struct {
 	cantidad int
 }
 
+type iterDiccionario[K comparable, V any] struct {
+	tabla       *hashAbierto[K, V]
+	actualHash  int
+	actualLista TDALista.IteradorLista[K]
+}
+
 func CrearHash[K comparable, V any]() Diccionario[K, V] {
 	return &hashAbierto[K, V]{
 		tabla:    make([]TDALista.Lista[parClaveValor[K, V]], TAMANO_INICIAL),
@@ -164,4 +170,19 @@ func (h *hashAbierto[K, V]) Cantidad() int {
 
 func (h *hashAbierto[K, V]) Iterar(func(clave K, dato V) bool) {
 
+}
+
+func (h *hashAbierto[K, V]) Iterador() IterDiccionario[K, V] {
+	iterador := &iterDiccionario[K, V]{}
+	iterador.actualHash = 0
+
+	for _, lista := range h.tabla {
+		if lista == nil {
+			iterador.actualHash++
+			if iterador.actualHash >= h.tam {
+				return
+			}
+		}
+
+	}
 }
