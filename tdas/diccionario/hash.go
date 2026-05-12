@@ -6,10 +6,11 @@ import (
 )
 
 const (
-	CARGA_MAX          = 2
-	TAMANO_INICIAL     = 11
-	CANTIDAD_INICIAL   = 0
-	FACTOR_REDIMENSION = 2
+	_CARGA_MAX          = 2
+	_TAMANO_INICIAL     = 11
+	_CANTIDAD_INICIAL   = 0
+	_FACTOR_REDIMENSION = 2
+	_POS_INICIAL        = 0
 )
 
 type parClaveValor[K comparable, V any] struct {
@@ -31,9 +32,9 @@ type iterDiccionario[K comparable, V any] struct {
 
 func CrearHash[K comparable, V any]() Diccionario[K, V] {
 	return &hashAbierto[K, V]{
-		tabla:    make([]TDALista.Lista[parClaveValor[K, V]], TAMANO_INICIAL),
-		tam:      TAMANO_INICIAL,
-		cantidad: CANTIDAD_INICIAL,
+		tabla:    make([]TDALista.Lista[parClaveValor[K, V]], _TAMANO_INICIAL),
+		tam:      _TAMANO_INICIAL,
+		cantidad: _CANTIDAD_INICIAL,
 	}
 }
 
@@ -102,8 +103,8 @@ func (h *hashAbierto[K, V]) Guardar(clave K, dato V) {
 	lista.InsertarUltimo(parClaveValor[K, V]{clave: clave, valor: dato})
 	h.cantidad++
 
-	if h.cantidad/h.tam == CARGA_MAX {
-		h.redimensionar(h.tam * FACTOR_REDIMENSION)
+	if h.cantidad/h.tam == _CARGA_MAX {
+		h.redimensionar(h.tam * _FACTOR_REDIMENSION)
 
 	}
 }
@@ -155,7 +156,7 @@ func (h *hashAbierto[K, V]) Borrar(clave K) V {
 			valorBorrado := elemento.valor
 			h.cantidad--
 			if h.cantidad == h.tam/2 {
-				h.redimensionar(h.tam / FACTOR_REDIMENSION)
+				h.redimensionar(h.tam / _FACTOR_REDIMENSION)
 			}
 			return valorBorrado
 		}
@@ -168,8 +169,19 @@ func (h *hashAbierto[K, V]) Cantidad() int {
 	return h.cantidad
 }
 
-func (h *hashAbierto[K, V]) Iterar(func(clave K, dato V) bool) {
-
+func (h *hashAbierto[K, V]) Iterar(visitar func(clave K, dato V) bool) {
+	debeContinuar := true
+	for i := _POS_INICIAL; i < h.tam && debeContinuar; i++ {
+		lista := h.tabla[i]
+		if lista != nil {
+			lista.Iterar(func(par parClaveValor[K, V]) bool {
+				if !visitar(par.clave, par.valor) {
+					debeContinuar = false
+				}
+				return debeContinuar
+			})
+		}
+	}
 }
 
 func (h *hashAbierto[K, V]) Iterador() IterDiccionario[K, V] {
