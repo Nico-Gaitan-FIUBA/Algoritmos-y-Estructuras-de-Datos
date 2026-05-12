@@ -27,7 +27,7 @@ type hashAbierto[K comparable, V any] struct {
 type iterDiccionario[K comparable, V any] struct {
 	tabla       *hashAbierto[K, V]
 	actualHash  int
-	actualLista TDALista.IteradorLista[K]
+	actualLista TDALista.IteradorLista[parClaveValor[K, V]]
 }
 
 func CrearHash[K comparable, V any]() Diccionario[K, V] {
@@ -185,16 +185,28 @@ func (h *hashAbierto[K, V]) Iterar(visitar func(clave K, dato V) bool) {
 }
 
 func (h *hashAbierto[K, V]) Iterador() IterDiccionario[K, V] {
-	iterador := &iterDiccionario[K, V]{}
+	iterador := &iterDiccionario[K, V]{} //{tabla: h, actualHash: 0, actualLista: nil}
 	iterador.actualHash = 0
 
 	for _, lista := range h.tabla {
 		if lista == nil {
 			iterador.actualHash++
 			if iterador.actualHash >= h.tam {
-				return
+				iterador.actualHash = h.tam
+				break
 			}
+		} else {
+			iterador.actualLista = h.tabla[iterador.actualHash].Iterador()
+			break
 		}
-
 	}
+	return iterador
+}
+
+func (i *iterDiccionario[K, V]) HayAlgoMas() bool {
+	return i.actualHash < i.tabla.tam
+}
+
+func (i *iterDiccionario[K, V]) VerActual() (K, V) {
+
 }
