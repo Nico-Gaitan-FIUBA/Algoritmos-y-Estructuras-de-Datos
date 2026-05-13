@@ -196,7 +196,10 @@ func (h *hashAbierto[K, V]) Iterador() IterDiccionario[K, V] {
 			}
 		} else {
 			iterador.actualLista = h.tabla[iterador.actualHash].Iterador()
-			break
+			if iterador.actualLista.HayAlgoMas() {
+				break
+			}
+			iterador.actualHash++
 		}
 	}
 	return iterador
