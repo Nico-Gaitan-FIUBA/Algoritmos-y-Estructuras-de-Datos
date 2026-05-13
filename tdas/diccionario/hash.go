@@ -208,5 +208,43 @@ func (i *iterDiccionario[K, V]) HayAlgoMas() bool {
 }
 
 func (i *iterDiccionario[K, V]) VerActual() (K, V) {
+	if !i.HayAlgoMas() {
+		panic("El iterador termino de iterar")
+	}
 	return i.actualLista.VerActual().clave, i.actualLista.VerActual().valor
+}
+
+func (i *iterDiccionario[K, V]) Avanzar() {
+	if !i.HayAlgoMas() {
+		panic("El iterador termino de iterar")
+	}
+
+	if i.tabla.tam == 0 {
+		panic("El iterador termino de iterar")
+	}
+
+	if i.actualLista.HayAlgoMas() {
+		i.actualLista.Avanzar()
+	} else {
+		for j := i.actualHash + 1; j < i.tabla.tam; j++ {
+			if i.tabla.tabla[j] != nil {
+				i.actualHash = j
+				i.actualLista = i.tabla.tabla[j].Iterador()
+				return
+			}
+		}
+		i.actualHash = i.tabla.tam
+	}
+
+	// i.actualHash++
+
+	// for _, lista := range i.tabla.tabla {
+	// 	if lista == nil {
+	// 		i.actualHash++
+	// 		if i.actualHash >= i.tabla.tam {
+	// 			i.actualHash = i.tabla.tam
+	// 			break
+	// 		}
+	// 	}
+	// }
 }
