@@ -185,8 +185,7 @@ func (h *hashAbierto[K, V]) Iterar(visitar func(clave K, dato V) bool) {
 }
 
 func (h *hashAbierto[K, V]) Iterador() IterDiccionario[K, V] {
-	iterador := &iterDiccionario[K, V]{} //{tabla: h, actualHash: 0, actualLista: nil}
-	iterador.actualHash = 0
+	iterador := &iterDiccionario[K, V]{tabla: h, actualHash: 0}
 
 	for _, lista := range h.tabla {
 		if lista == nil {
@@ -218,33 +217,15 @@ func (i *iterDiccionario[K, V]) Avanzar() {
 	if !i.HayAlgoMas() {
 		panic("El iterador termino de iterar")
 	}
-
-	if i.tabla.tam == 0 {
-		panic("El iterador termino de iterar")
-	}
-
-	if i.actualLista.HayAlgoMas() {
-		i.actualLista.Avanzar()
-	} else {
-		for j := i.actualHash + 1; j < i.tabla.tam; j++ {
-			if i.tabla.tabla[j] != nil {
-				i.actualHash = j
-				i.actualLista = i.tabla.tabla[j].Iterador()
-				return
-			}
+	i.actualLista.Avanzar()
+	for !i.actualLista.HayAlgoMas() {
+		i.actualHash++
+		if i.actualHash >= i.tabla.tam {
+			break
 		}
-		i.actualHash = i.tabla.tam
+		lista := i.tabla.tabla[i.actualHash]
+		if lista != nil {
+			i.actualLista = lista.Iterador()
+		}
 	}
-
-	// i.actualHash++
-
-	// for _, lista := range i.tabla.tabla {
-	// 	if lista == nil {
-	// 		i.actualHash++
-	// 		if i.actualHash >= i.tabla.tam {
-	// 			i.actualHash = i.tabla.tam
-	// 			break
-	// 		}
-	// 	}
-	// }
 }
