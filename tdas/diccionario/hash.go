@@ -208,5 +208,5 @@ func (i *iterDiccionario[K, V]) HayAlgoMas() bool {
 }
 
 func (i *iterDiccionario[K, V]) VerActual() (K, V) {
-
+	return i.actualLista.VerActual().clave, i.actualLista.VerActual().valor
 }

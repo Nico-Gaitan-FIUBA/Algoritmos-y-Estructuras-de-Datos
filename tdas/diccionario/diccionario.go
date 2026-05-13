@@ -34,9 +34,9 @@ type IterDiccionario[K comparable, V any] interface {
 	HayAlgoMas() bool
 
 	// VerActual devuelve la clave y el dato del elemento actual en el que se encuentra posicionado el iterador.
-	// Si no HaySiguiente, debe entrar en pánico con el mensaje 'El iterador termino de iterar'
 	VerActual() (K, V)
 
+	// Si no HaySiguiente, debe entrar en pánico con el mensaje 'El iterador termino de iterar'
 	// Avanzar si HaySiguiente avanza al siguiente elemento en el diccionario. Si no HaySiguiente, entonces debe
 	// entrar en pánico con mensaje 'El iterador termino de iterar'
 	Avanzar()
