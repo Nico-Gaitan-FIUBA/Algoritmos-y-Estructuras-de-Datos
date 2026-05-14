@@ -89,10 +89,19 @@ func (h *hashAbierto[K, V]) actualizarValor(lista TDALista.Lista[parClaveValor[K
 	return false
 }
 
+func (h *hashAbierto[K, V]) buscarClaveHash(clave K) int {
+	claveHash := jenkinsHash(string(convertirABytes(clave)), h.tam)
+	return int(claveHash)
+}
+
+func (h *hashAbierto[K, V]) buscarLista(claveHash int) TDALista.Lista[parClaveValor[K, V]] {
+	return h.tabla[claveHash]
+}
+
 func (h *hashAbierto[K, V]) Guardar(clave K, dato V) {
 
-	claveHash := jenkinsHash(string(convertirABytes(clave)), h.tam)
-	lista := h.tabla[claveHash]
+	claveHash := h.buscarClaveHash(clave)
+	lista := h.buscarLista(claveHash)
 
 	if lista == nil {
 		lista = TDALista.CrearListaEnlazada[parClaveValor[K, V]]()
@@ -112,8 +121,8 @@ func (h *hashAbierto[K, V]) Guardar(clave K, dato V) {
 }
 
 func (h *hashAbierto[K, V]) Pertenece(clave K) bool {
-	claveHash := jenkinsHash(string(convertirABytes(clave)), h.tam)
-	lista := h.tabla[claveHash]
+	claveHash := h.buscarClaveHash(clave)
+	lista := h.buscarLista(claveHash)
 	if lista == nil {
 		return false
 	}
@@ -129,8 +138,8 @@ func (h *hashAbierto[K, V]) Pertenece(clave K) bool {
 }
 
 func (h *hashAbierto[K, V]) Obtener(clave K) V {
-	claveHash := jenkinsHash(string(convertirABytes(clave)), h.tam)
-	lista := h.tabla[claveHash]
+	claveHash := h.buscarClaveHash(clave)
+	lista := h.buscarLista(claveHash)
 
 	if lista == nil {
 		panic("La clave no pertenece al diccionario")
@@ -145,8 +154,8 @@ func (h *hashAbierto[K, V]) Obtener(clave K) V {
 }
 
 func (h *hashAbierto[K, V]) Borrar(clave K) V {
-	claveHash := jenkinsHash(string(convertirABytes(clave)), h.tam)
-	lista := h.tabla[claveHash]
+	claveHash := h.buscarClaveHash(clave)
+	lista := h.buscarLista(claveHash)
 
 	if lista == nil {
 		panic("La clave no pertenece al diccionario")
