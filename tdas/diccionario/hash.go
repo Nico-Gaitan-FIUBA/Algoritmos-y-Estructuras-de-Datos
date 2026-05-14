@@ -40,7 +40,7 @@ func CrearHash[K comparable, V any]() Diccionario[K, V] {
 	}
 }
 
-func JenkinsHash(clave string, tam int) uint32 {
+func jenkinsHash(clave string, tam int) uint32 {
 	var hash uint32 = 0
 
 	for i := 0; i < len(clave); i++ {
@@ -65,7 +65,7 @@ func (h *hashAbierto[K, V]) redimensionar(tam int) {
 	for _, lista := range h.tabla {
 		if lista != nil {
 			lista.Iterar(func(par parClaveValor[K, V]) bool {
-				claveHash := JenkinsHash(string(convertirABytes(par.clave)), tam)
+				claveHash := jenkinsHash(string(convertirABytes(par.clave)), tam)
 				if nuevaTabla[claveHash] == nil {
 					nuevaTabla[claveHash] = TDALista.CrearListaEnlazada[parClaveValor[K, V]]()
 				}
@@ -91,7 +91,7 @@ func (h *hashAbierto[K, V]) actualizarValor(lista TDALista.Lista[parClaveValor[K
 
 func (h *hashAbierto[K, V]) Guardar(clave K, dato V) {
 
-	claveHash := JenkinsHash(string(convertirABytes(clave)), h.tam)
+	claveHash := jenkinsHash(string(convertirABytes(clave)), h.tam)
 	lista := h.tabla[claveHash]
 
 	if lista == nil {
@@ -112,7 +112,7 @@ func (h *hashAbierto[K, V]) Guardar(clave K, dato V) {
 }
 
 func (h *hashAbierto[K, V]) Pertenece(clave K) bool {
-	claveHash := JenkinsHash(string(convertirABytes(clave)), h.tam)
+	claveHash := jenkinsHash(string(convertirABytes(clave)), h.tam)
 	lista := h.tabla[claveHash]
 	if lista == nil {
 		return false
@@ -129,7 +129,7 @@ func (h *hashAbierto[K, V]) Pertenece(clave K) bool {
 }
 
 func (h *hashAbierto[K, V]) Obtener(clave K) V {
-	claveHash := JenkinsHash(string(convertirABytes(clave)), h.tam)
+	claveHash := jenkinsHash(string(convertirABytes(clave)), h.tam)
 	lista := h.tabla[claveHash]
 
 	if lista == nil {
@@ -145,7 +145,7 @@ func (h *hashAbierto[K, V]) Obtener(clave K) V {
 }
 
 func (h *hashAbierto[K, V]) Borrar(clave K) V {
-	claveHash := JenkinsHash(string(convertirABytes(clave)), h.tam)
+	claveHash := jenkinsHash(string(convertirABytes(clave)), h.tam)
 	lista := h.tabla[claveHash]
 
 	if lista == nil {
