@@ -99,7 +99,6 @@ func (h *hashAbierto[K, V]) buscarLista(claveHash int) TDALista.Lista[parClaveVa
 }
 
 func (h *hashAbierto[K, V]) Guardar(clave K, dato V) {
-
 	claveHash := h.buscarClaveHash(clave)
 	lista := h.buscarLista(claveHash)
 
