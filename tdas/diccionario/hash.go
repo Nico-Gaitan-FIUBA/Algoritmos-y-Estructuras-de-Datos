@@ -6,11 +6,13 @@ import (
 )
 
 const (
-	_CARGA_MAX          = 2
-	_TAMANO_INICIAL     = 11
-	_CANTIDAD_INICIAL   = 0
-	_FACTOR_REDIMENSION = 2
-	_POS_INICIAL        = 0
+	_FACTOR_DE_CARGA_MIN = 2.00
+	_FACTOR_DE_CARGA_MAX = 3.00
+	_OCUPACION_MINIMA    = 0.25
+	_TAMANO_INICIAL      = 11
+	_CANTIDAD_INICIAL    = 0
+	_FACTOR_REDIMENSION  = 2
+	_POS_INICIAL         = 0
 )
 
 type parClaveValor[K comparable, V any] struct {
@@ -103,7 +105,7 @@ func (h *hashAbierto[K, V]) Guardar(clave K, dato V) {
 	lista.InsertarUltimo(parClaveValor[K, V]{clave: clave, valor: dato})
 	h.cantidad++
 
-	if h.cantidad/h.tam == _CARGA_MAX {
+	if float32(h.cantidad)/float32(h.tam) >= _FACTOR_DE_CARGA_MIN && float32(h.cantidad)/float32(h.tam) < _FACTOR_DE_CARGA_MAX {
 		h.redimensionar(h.tam * _FACTOR_REDIMENSION)
 
 	}
@@ -155,7 +157,7 @@ func (h *hashAbierto[K, V]) Borrar(clave K) V {
 			elemento := iter.Borrar()
 			valorBorrado := elemento.valor
 			h.cantidad--
-			if h.cantidad == h.tam/2 {
+			if float32(h.cantidad) == float32(h.tam)*_OCUPACION_MINIMA && h.tam/_FACTOR_REDIMENSION >= _TAMANO_INICIAL {
 				h.redimensionar(h.tam / _FACTOR_REDIMENSION)
 			}
 			return valorBorrado
