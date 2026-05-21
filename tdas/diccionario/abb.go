@@ -29,37 +29,58 @@ func CrearABB[K comparable, V any](funcion_cmp func(K, K) int) DiccionarioOrdena
 //     Un entero mayor que 0 si la primera clave es mayor que la segunda. --> positivo si 1era > 2da
 //     0 si ambas claves son iguales.
 
-func (a *abb[K, V]) buscarNodo(claveDelNodoABuscar K, subRaiz *nodoAbb[K, V]) *nodoAbb[K, V] {
+func (a *abb[K, V]) buscarNodoYPadre(claveDelNodoABuscar K, subRaiz *nodoAbb[K, V], padre *nodoAbb[K, V]) (*nodoAbb[K, V], *nodoAbb[K, V]) {
 	if subRaiz == nil {
-		return nil
+		return nil, nil
 	}
 	cmp := a.funcion_cmp(claveDelNodoABuscar, subRaiz.clave)
 
 	switch {
 	case cmp < 0: // --> clave: 1  raiz.clave: 2
-		return a.buscarNodo(claveDelNodoABuscar, subRaiz.izq)
+		return a.buscarNodoYPadre(claveDelNodoABuscar, subRaiz.izq, subRaiz)
 	case cmp > 0: // --> clave: 3  raiz.clave: 2
-		return a.buscarNodo(claveDelNodoABuscar, subRaiz.der)
+		return a.buscarNodoYPadre(claveDelNodoABuscar, subRaiz.der, subRaiz)
 	default:
-		return subRaiz
+		return subRaiz, padre
 	}
 }
 
 func (a *abb[K, V]) Guardar(clave K, dato V) {
+	nodoAObtener, padre := a.buscarNodoYPadre(clave, a.raiz, nil)
 
+	if nodoAObtener == nil {
+		nuevoNodo := &nodoAbb[K, V]{clave: clave, dato: dato}
+		if a.raiz == nil {
+			a.raiz = nuevoNodo
+		} else if a.funcion_cmp(clave, padre.clave) < 0 {
+			padre.izq = nuevoNodo
+		} else {
+			padre.der = nuevoNodo
+		}
+		a.cant++
+	} else {
+		nodoAObtener.dato = dato
+	}
 }
 
 func (a *abb[K, V]) Pertenece(clave K) bool {
-	return a.buscarNodo(clave, a.raiz) != nil
+	nodoAObtener, _ := a.buscarNodoYPadre(clave, a.raiz, nil)
+
+	return nodoAObtener != nil
 }
 
 func (a *abb[K, V]) Obtener(clave K) V {
-	nodoAObtener := a.buscarNodo(clave, a.raiz)
+	nodoAObtener, _ := a.buscarNodoYPadre(clave, a.raiz, nil)
 
 	if nodoAObtener == nil {
 		panic("La clave no pertenece al diccionario")
 	}
 	return nodoAObtener.dato
+}
+
+func (a *abb[K, V]) Borrar(clave K) V {
+	nodoAObtener, padre := a.buscarNodoYPadre(clave, a.raiz, nil)
+
 }
 
 func (a *abb[K, V]) Cantidad() int {
