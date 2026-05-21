@@ -1,20 +1,20 @@
 package diccionario
 
-type nodoABB[K comparable, V any] struct {
-	izq   *nodoABB[K, V]
-	der   *nodoABB[K, V]
+type nodoAbb[K comparable, V any] struct {
+	izq   *nodoAbb[K, V]
+	der   *nodoAbb[K, V]
 	clave K
 	dato  V
 }
 
-type ABB[K comparable, V any] struct {
-	raiz        *nodoABB[K, V]
+type abb[K comparable, V any] struct {
+	raiz        *nodoAbb[K, V]
 	funcion_cmp func(K, K) int
 	cant        int
 }
 
 func CrearABB[K comparable, V any](funcion_cmp func(K, K) int) DiccionarioOrdenado[K, V] {
-	return &ABB[K, V]{
+	return &abb[K, V]{
 		raiz: nil,
 		funcion_cmp: func(clave1, clave2 K) int {
 			return funcion_cmp(clave1, clave2)
@@ -29,7 +29,7 @@ func CrearABB[K comparable, V any](funcion_cmp func(K, K) int) DiccionarioOrdena
 //     Un entero mayor que 0 si la primera clave es mayor que la segunda. --> positivo si 1era > 2da
 //     0 si ambas claves son iguales.
 
-func (a *ABB[K, V]) buscarNodo(claveDelNodoABuscar K, subRaiz *nodoABB[K, V]) *nodoABB[K, V] {
+func (a *abb[K, V]) buscarNodo(claveDelNodoABuscar K, subRaiz *nodoAbb[K, V]) *nodoAbb[K, V] {
 	if subRaiz == nil {
 		return nil
 	}
@@ -45,15 +45,15 @@ func (a *ABB[K, V]) buscarNodo(claveDelNodoABuscar K, subRaiz *nodoABB[K, V]) *n
 	}
 }
 
-func (a *ABB[K, V]) Guardar(clave K, dato V) {
+func (a *abb[K, V]) Guardar(clave K, dato V) {
 
 }
 
-func (a *ABB[K, V]) Pertenece(clave K) bool {
+func (a *abb[K, V]) Pertenece(clave K) bool {
 	return a.buscarNodo(clave, a.raiz) != nil
 }
 
-func (a *ABB[K, V]) Obtener(clave K) V {
+func (a *abb[K, V]) Obtener(clave K) V {
 	nodoAObtener := a.buscarNodo(clave, a.raiz)
 
 	if nodoAObtener == nil {
@@ -62,6 +62,6 @@ func (a *ABB[K, V]) Obtener(clave K) V {
 	return nodoAObtener.dato
 }
 
-func (a *ABB[K, V]) Cantidad() int {
+func (a *abb[K, V]) Cantidad() int {
 	return a.cant
 }
