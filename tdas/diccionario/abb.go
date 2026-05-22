@@ -31,7 +31,7 @@ func CrearABB[K comparable, V any](funcion_cmp func(K, K) int) DiccionarioOrdena
 
 func (a *abb[K, V]) buscarNodoYPadre(claveDelNodoABuscar K, subRaiz *nodoAbb[K, V], padre *nodoAbb[K, V]) (*nodoAbb[K, V], *nodoAbb[K, V]) {
 	if subRaiz == nil {
-		return nil, nil
+		return nil, padre
 	}
 	cmp := a.funcion_cmp(claveDelNodoABuscar, subRaiz.clave)
 
@@ -80,6 +80,23 @@ func (a *abb[K, V]) Obtener(clave K) V {
 
 func (a *abb[K, V]) Borrar(clave K) V {
 	nodoAObtener, padre := a.buscarNodoYPadre(clave, a.raiz, nil)
+
+	if nodoAObtener.izq == nil && nodoAObtener.der == nil {
+		if nodoAObtener < padre {
+			padre.izq = nil
+		} else {
+			padre.der = nil
+		}
+
+	} else if nodoAObtener.izq != nil && nodoAObtener.der == nil {
+		padre.izq = nodoAObtener.izq
+	} else if nodoAObtener.izq == nil && nodoAObtener.der != nil {
+		padre.der = nodoAObtener.der
+	} else {
+
+	}
+	a.cant--
+	return nodoAObtener.dato
 
 }
 
