@@ -79,25 +79,50 @@ func (a *abb[K, V]) Obtener(clave K) V {
 }
 
 func (a *abb[K, V]) Borrar(clave K) V {
-	nodoAObtener, padre := a.buscarNodoYPadre(clave, a.raiz, nil)
+	nodoABorrar, padre := a.buscarNodoYPadre(clave, a.raiz, nil)
+	datoBorrado := nodoABorrar.dato
 
-	if nodoAObtener.izq == nil && nodoAObtener.der == nil {
-		if nodoAObtener < padre {
+	if nodoABorrar == nil {
+		panic("La clave no pertenece al diccionario")
+	}
+
+	if nodoABorrar.izq == nil && nodoABorrar.der == nil {
+		if a.funcion_cmp(nodoABorrar.clave, padre.clave) < 0 {
 			padre.izq = nil
 		} else {
 			padre.der = nil
 		}
 
-	} else if nodoAObtener.izq != nil && nodoAObtener.der == nil {
-		padre.izq = nodoAObtener.izq
-	} else if nodoAObtener.izq == nil && nodoAObtener.der != nil {
-		padre.der = nodoAObtener.der
+	} else if nodoABorrar.izq != nil && nodoABorrar.der == nil {
+		padre.izq = nodoABorrar.izq
+	} else if nodoABorrar.izq == nil && nodoABorrar.der != nil {
+		padre.der = nodoABorrar.der
 	} else {
 
 	}
-	a.cant--
-	return nodoAObtener.dato
 
+	// Esto es lo mismo pero tomando como el mismo caso tener 0 o 1 hijos (creo q lo implemente bien):
+
+	// if nodoABorrar.izq != nil || nodoABorrar.der != nil {
+	// 	// Caso de dos hijos
+	// } else {
+	// 	if a.funcion_cmp(nodoABorrar.clave, padre.clave) > 0 {
+	// 		if nodoABorrar.izq == nil {
+	// 			padre.der = nodoABorrar.der
+	// 		} else {
+	// 			padre.der = nodoABorrar.izq
+	// 		}
+	// 	} else {
+	// 		if nodoABorrar.izq == nil {
+	// 			padre.izq = nodoABorrar.der
+	// 		} else {
+	// 			padre.izq = nodoABorrar.izq
+	// 		}
+	// 	}
+	// }
+
+	a.cant--
+	return datoBorrado
 }
 
 func (a *abb[K, V]) Cantidad() int {
