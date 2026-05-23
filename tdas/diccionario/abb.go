@@ -165,14 +165,20 @@ func (nodo *nodoAbb[K, V]) iterarRango(arbol *abb[K, V], desde *K, hasta *K, vis
 	}
 
 	if arbol.funcion_cmp(nodo.clave, *hasta) > 0 {
-		nodo.izq.iterar(visitar)
+		nodo.izq.iterarRango(arbol, desde, hasta, visitar)
 	}
 
 	if arbol.funcion_cmp(nodo.clave, *desde) > 0 && arbol.funcion_cmp(nodo.clave, *hasta) < 0 {
-		visitar(nodo.clave, nodo.dato)
+		nodo.izq.iterarRango(arbol, desde, hasta, visitar)
+
+		if !visitar(nodo.clave, nodo.dato) {
+			return
+		}
+
+		nodo.der.iterarRango(arbol, desde, hasta, visitar)
 	}
 
 	if arbol.funcion_cmp(nodo.clave, *desde) < 0 {
-		nodo.der.iterar(visitar)
+		nodo.der.iterarRango(arbol, desde, hasta, visitar)
 	}
 }
