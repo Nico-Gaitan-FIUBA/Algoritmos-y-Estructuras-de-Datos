@@ -120,3 +120,45 @@ func (a *abb[K, V]) Borrar(clave K) V {
 func (a *abb[K, V]) Cantidad() int {
 	return a.cant
 }
+
+func (a *abb[K, V]) Iterar(visitar func(clave K, dato V) bool) {
+	if a.raiz != nil {
+		a.raiz.iterar(visitar)
+	}
+}
+
+func (nodo *nodoAbb[K, V]) iterar(visitar func(clave K, dato V) bool) {
+	if nodo == nil {
+		return
+	}
+
+	nodo.izq.iterar(visitar)
+	if !visitar(nodo.clave, nodo.dato) {
+		return
+	}
+	nodo.der.iterar(visitar)
+}
+
+func (a *abb[K, V]) IterarRango(desde *K, hasta *K, visitar func(clave K, dato V) bool) {
+	if a.raiz != nil {
+		a.raiz.iterarRango(a, desde, hasta, visitar)
+	}
+}
+
+func (nodo *nodoAbb[K, V]) iterarRango(arbol *abb[K, V], desde *K, hasta *K, visitar func(clave K, dato V) bool) {
+	if nodo == nil {
+		return
+	}
+
+	if arbol.funcion_cmp(nodo.clave, *hasta) > 0 {
+		nodo.izq.iterar(visitar)
+	}
+
+	if arbol.funcion_cmp(nodo.clave, *desde) > 0 && arbol.funcion_cmp(nodo.clave, *hasta) < 0 {
+		visitar(nodo.clave, nodo.dato)
+	}
+
+	if arbol.funcion_cmp(nodo.clave, *desde) < 0 {
+		nodo.der.iterar(visitar)
+	}
+}
