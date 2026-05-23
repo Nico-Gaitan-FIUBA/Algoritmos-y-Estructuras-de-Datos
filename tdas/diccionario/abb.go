@@ -78,42 +78,56 @@ func (a *abb[K, V]) Obtener(clave K) V {
 	return nodoAObtener.dato
 }
 
+func (a *abb[K, V]) buscarReemplazo(nodoAReemplazar *nodoAbb[K, V]) *nodoAbb[K, V] {
+
+	reemplazo := nodoAReemplazar.izq
+	for reemplazo.der != nil {
+		reemplazo = reemplazo.der
+	}
+	return reemplazo
+}
+
+func (a *abb[K, V]) procesarCasoDosHijos(nodoABorrar *nodoAbb[K, V]) {
+	reemplazo := a.buscarReemplazo(nodoABorrar)
+	claveReemplazo := reemplazo.clave
+	datoReemplazo := reemplazo.dato
+
+	a.Borrar(claveReemplazo)
+
+	nodoABorrar.clave = claveReemplazo
+	nodoABorrar.dato = datoReemplazo
+}
+func (a *abb[K, V]) procesarCasoCeroOUnHijo(nodoABorrar *nodoAbb[K, V], padre *nodoAbb[K, V]) {
+	var huerfano *nodoAbb[K, V]
+	if nodoABorrar.izq == nil {
+		huerfano = nodoABorrar.der
+	} else {
+		huerfano = nodoABorrar.izq
+	}
+
+	if padre == nil {
+		a.raiz = huerfano
+	} else if a.funcion_cmp(nodoABorrar.clave, padre.clave) > 0 {
+		padre.der = huerfano
+	} else {
+		padre.izq = huerfano
+	}
+	a.cant--
+}
+
 func (a *abb[K, V]) Borrar(clave K) V {
 	nodoABorrar, padre := a.buscarNodoYPadre(clave, a.raiz, nil)
-	datoBorrado := nodoABorrar.dato
-
 	if nodoABorrar == nil {
 		panic("La clave no pertenece al diccionario")
 	}
 
-	if nodoABorrar == a.raiz {
-		if nodoABorrar.izq == nil {
-			a.raiz = nodoABorrar.der
-		} else if nodoABorrar.der == nil {
-			a.raiz = nodoABorrar.izq
-		} else {
-			// Caso de dos hijos
-		}
-	}
+	datoBorrado := nodoABorrar.dato
 
 	if nodoABorrar.izq != nil && nodoABorrar.der != nil {
-		// Caso de dos hijos
+		a.procesarCasoDosHijos(nodoABorrar)
 	} else {
-		if a.funcion_cmp(nodoABorrar.clave, padre.clave) > 0 {
-			if nodoABorrar.izq == nil {
-				padre.der = nodoABorrar.der
-			} else {
-				padre.der = nodoABorrar.izq
-			}
-		} else {
-			if nodoABorrar.izq == nil {
-				padre.izq = nodoABorrar.der
-			} else {
-				padre.izq = nodoABorrar.izq
-			}
-		}
+		a.procesarCasoCeroOUnHijo(nodoABorrar, padre)
 	}
-	a.cant--
 	return datoBorrado
 }
 
