@@ -1,5 +1,9 @@
 package diccionario
 
+import (
+	TDAPila "tdas/pila"
+)
+
 type nodoAbb[K comparable, V any] struct {
 	izq   *nodoAbb[K, V]
 	der   *nodoAbb[K, V]
@@ -11,6 +15,13 @@ type abb[K comparable, V any] struct {
 	raiz        *nodoAbb[K, V]
 	funcion_cmp func(K, K) int
 	cant        int
+}
+
+type iterDiccionarioAbb[K comparable, V any] struct {
+	pila  TDAPila.Pila[*nodoAbb[K, V]]
+	desde *K
+	hasta *K
+	arbol *abb[K, V]
 }
 
 func CrearABB[K comparable, V any](funcion_cmp func(K, K) int) DiccionarioOrdenado[K, V] {
@@ -29,19 +40,19 @@ func CrearABB[K comparable, V any](funcion_cmp func(K, K) int) DiccionarioOrdena
 //     Un entero mayor que 0 si la primera clave es mayor que la segunda. --> positivo si 1era > 2da
 //     0 si ambas claves son iguales.
 
-func (a *abb[K, V]) buscarNodoYPadre(claveDelNodoABuscar K, subRaiz *nodoAbb[K, V], padre *nodoAbb[K, V]) (*nodoAbb[K, V], *nodoAbb[K, V]) {
-	if subRaiz == nil {
+func (a *abb[K, V]) buscarNodoYPadre(claveDelNodoABuscar K, raiz *nodoAbb[K, V], padre *nodoAbb[K, V]) (*nodoAbb[K, V], *nodoAbb[K, V]) {
+	if raiz == nil {
 		return nil, padre
 	}
-	cmp := a.funcion_cmp(claveDelNodoABuscar, subRaiz.clave)
+	cmp := a.funcion_cmp(claveDelNodoABuscar, raiz.clave)
 
 	switch {
 	case cmp < 0: // --> clave: 1  raiz.clave: 2
-		return a.buscarNodoYPadre(claveDelNodoABuscar, subRaiz.izq, subRaiz)
+		return a.buscarNodoYPadre(claveDelNodoABuscar, raiz.izq, raiz)
 	case cmp > 0: // --> clave: 3  raiz.clave: 2
-		return a.buscarNodoYPadre(claveDelNodoABuscar, subRaiz.der, subRaiz)
+		return a.buscarNodoYPadre(claveDelNodoABuscar, raiz.der, raiz)
 	default:
-		return subRaiz, padre
+		return raiz, padre
 	}
 }
 
@@ -78,17 +89,15 @@ func (a *abb[K, V]) Obtener(clave K) V {
 	return nodoAObtener.dato
 }
 
-func (a *abb[K, V]) buscarReemplazo(nodoAReemplazar *nodoAbb[K, V]) *nodoAbb[K, V] {
-
-	reemplazo := nodoAReemplazar.izq
-	for reemplazo.der != nil {
-		reemplazo = reemplazo.der
+func (a *abb[K, V]) buscarReemplazo(inicio *nodoAbb[K, V]) *nodoAbb[K, V] {
+	if inicio.der == nil {
+		return inicio
 	}
-	return reemplazo
+	return a.buscarReemplazo(inicio.der)
 }
 
 func (a *abb[K, V]) procesarCasoDosHijos(nodoABorrar *nodoAbb[K, V]) {
-	reemplazo := a.buscarReemplazo(nodoABorrar)
+	reemplazo := a.buscarReemplazo(nodoABorrar.izq)
 	claveReemplazo := reemplazo.clave
 	datoReemplazo := reemplazo.dato
 
@@ -97,6 +106,7 @@ func (a *abb[K, V]) procesarCasoDosHijos(nodoABorrar *nodoAbb[K, V]) {
 	nodoABorrar.clave = claveReemplazo
 	nodoABorrar.dato = datoReemplazo
 }
+
 func (a *abb[K, V]) procesarCasoCeroOUnHijo(nodoABorrar *nodoAbb[K, V], padre *nodoAbb[K, V]) {
 	var huerfano *nodoAbb[K, V]
 	if nodoABorrar.izq == nil {
@@ -181,4 +191,51 @@ func (nodo *nodoAbb[K, V]) iterarRango(arbol *abb[K, V], desde *K, hasta *K, vis
 	if arbol.funcion_cmp(nodo.clave, *desde) < 0 {
 		nodo.der.iterarRango(arbol, desde, hasta, visitar)
 	}
+}
+
+func (a *abb[K, V]) buscarElMasChico(iterador *iterDiccionarioAbb[K, V], inicio *nodoAbb[K, V], desde *K, hasta *K) *nodoAbb[K, V] {
+	iterador.pila.Apilar(inicio) //inicio = 5
+
+	// pila.vertope() esta en el rango?
+	// si: veo inicio.izq
+	// no: pila.vertope.desapilar()
+
+	if inicio.izq == nil {
+		return inicio
+	}
+	return a.buscarElMasChico(iterador, inicio.izq, desde, hasta)
+}
+
+func (a *abb[K, V]) Iterador() IterDiccionario[K, V] {
+	return a.IteradorRango(nil, nil)
+}
+
+func (a *abb[K, V]) IteradorRango(desde *K, hasta *K) IterDiccionario[K, V] {
+	iterador := &iterDiccionarioAbb[K, V]{
+		pila:  TDAPila.CrearPilaDinamica[*nodoAbb[K, V]](),
+		desde: desde,
+		hasta: hasta,
+		arbol: a,
+	}
+
+	primerNodo := a.buscarElMasChico(iterador, a.raiz, desde, hasta)
+
+}
+
+func (i *iterDiccionarioAbb[K, V]) HayAlgoMas() bool {
+	return !i.pila.EstaVacia()
+}
+
+func (i *iterDiccionarioAbb[K, V]) VerActual() (K, V) {
+	if !i.HayAlgoMas() {
+		panic("El iterador termino de iterar")
+	}
+	return i.pila.VerTope().clave, i.pila.VerTope().dato
+}
+
+func (i *iterDiccionarioAbb[K, V]) Avanzar() {
+	if !i.HayAlgoMas() {
+		panic("El iterador termino de iterar")
+	}
+
 }
