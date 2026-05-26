@@ -194,7 +194,7 @@ func (nodo *nodoAbb[K, V]) iterarRango(arbol *abb[K, V], desde *K, hasta *K, vis
 }
 
 func (a *abb[K, V]) buscarMinimoEnRango(iterador *iterDiccionarioAbb[K, V], inicio *nodoAbb[K, V], desde *K) *nodoAbb[K, V] {
-	iterador.pila.Apilar(inicio) //inicio = 2
+	iterador.pila.Apilar(inicio) //inicio = 79
 
 	if a.funcion_cmp(iterador.pila.VerTope().clave, *desde) < 0 { //entra si NO esta en el rango, o sea si es menor a desde
 		iterador.pila.Desapilar()
@@ -224,8 +224,11 @@ func (a *abb[K, V]) IteradorRango(desde *K, hasta *K) IterDiccionario[K, V] {
 		arbol: a,
 	}
 
-	primerNodo := a.buscarMinimoEnRango(iterador, a.raiz, desde)
+	if a.raiz != nil {
+		primerNodo := a.buscarMinimoEnRango(iterador, a.raiz, desde)
+	}
 
+	return iterador
 }
 
 func (i *iterDiccionarioAbb[K, V]) HayAlgoMas() bool {
@@ -243,5 +246,9 @@ func (i *iterDiccionarioAbb[K, V]) Avanzar() {
 	if !i.HayAlgoMas() {
 		panic("El iterador termino de iterar")
 	}
+
+	nodoActual := i.pila.Desapilar()
+
+	i.arbol.buscarMinimoEnRango(i, nodoActual.der, i.desde)
 
 }
