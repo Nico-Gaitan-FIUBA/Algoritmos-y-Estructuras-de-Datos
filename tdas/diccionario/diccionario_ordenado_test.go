@@ -8,6 +8,19 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func insertarBalanceado(dic TDADiccionario.DiccionarioOrdenado[string, *int], claves []string, valores []int, inicio, fin int) {
+	if inicio > fin {
+		return
+	}
+
+	medio := (inicio + fin) / 2
+
+	dic.Guardar(claves[medio], &valores[medio])
+
+	insertarBalanceado(dic, claves, valores, inicio, medio-1)
+	insertarBalanceado(dic, claves, valores, medio+1, fin)
+}
+
 //var TAMS_VOLUMEN = []int{12500, 25000, 50000, 100000, 200000, 400000}
 
 func TestDiccionarioOrdenadoVacio(t *testing.T) {
@@ -715,8 +728,9 @@ func ejecutarPruebasdeVolumenIterador(b *testing.B, n int) {
 	for i := 0; i < n; i++ {
 		claves[i] = fmt.Sprintf("%08d", i)
 		valores[i] = i
-		dic.Guardar(claves[i], &valores[i])
 	}
+
+	insertarBalanceado(dic, claves, valores, 0, n-1)
 
 	// Prueba de iteración sobre las claves almacenadas.
 	iter := dic.Iterador()
