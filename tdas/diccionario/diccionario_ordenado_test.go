@@ -286,8 +286,8 @@ func TestWithKeysStructs(t *testing.T) {
 		return 0
 	})
 	a1 := avanzado{w: 10, z: "hola", x: basico{a: "mundo", b: 8}, y: basico{a: "!", b: 10}}
-	a2 := avanzado{w: 10, z: "aloh", x: basico{a: "odnum", b: 14}, y: basico{a: "!", b: 5}}
-	a3 := avanzado{w: 10, z: "hello", x: basico{a: "world", b: 8}, y: basico{a: "!", b: 4}}
+	a2 := avanzado{w: 9, z: "aloh", x: basico{a: "odnum", b: 14}, y: basico{a: "!", b: 5}}
+	a3 := avanzado{w: 11, z: "hello", x: basico{a: "world", b: 8}, y: basico{a: "!", b: 4}}
 
 	dic.Guardar(a1, 0)
 	dic.Guardar(a2, 1)
@@ -308,7 +308,7 @@ func TestWithKeysStructs(t *testing.T) {
 
 }
 
-func TestkeyEmpty(t *testing.T) {
+func TestKeyEmpty(t *testing.T) {
 	t.Log("Guardamos una clave vacía (i.e. \"\") y deberia funcionar sin problemas")
 	dic := TDADiccionario.CrearABB[string, string](func(clave1, clave2 string) int {
 		if clave1 < clave2 {
