@@ -824,3 +824,270 @@ func TestVolumenIterCorte(t *testing.T) {
 	require.False(t, siguioEjecutandoCuandoNoDebia,
 		"No debería haber seguido ejecutando si encontramos un elemento que hizo que la iteración corte")
 }
+
+func TestIterarRango(t *testing.T) {
+	dic := TDADiccionario.CrearABB[int, int](func(clave1, clave2 int) int {
+		if clave1 < clave2 {
+			return -1
+		} else if clave1 > clave2 {
+			return 1
+		}
+		return 0
+	})
+
+	claves := []int{1, 2, 3, 4, 5, 6, 7}
+	for i, clave := range claves {
+		dic.Guardar(clave, i)
+	}
+
+	rango := []int{2, 5}
+	recorridas := make(map[int]bool)
+
+	dic.IterarRango(&rango[0], &rango[1], func(clave int, valor int) bool {
+		recorridas[clave] = true
+		return true
+	})
+
+	require.EqualValues(t, 4, len(recorridas), "Se deberían haber recorrido 4 claves")
+	require.True(t, recorridas[2], "Debería haberse recorrido la clave 2")
+	require.True(t, recorridas[3], "Debería haberse recorrido la clave 3")
+	require.True(t, recorridas[4], "Debería haberse recorrido la clave 4")
+	require.True(t, recorridas[5], "Debería haberse recorrido la clave 5")
+	require.False(t, recorridas[1], "No debería haberse recorrido la clave 1")
+	require.False(t, recorridas[6], "No debería haberse recorrido la clave 6")
+	require.False(t, recorridas[7], "No debería haberse recorrido la clave 7")
+}
+
+func TestIterarRangoSinLimiteInferior(t *testing.T) {
+	dic := TDADiccionario.CrearABB[int, int](func(clave1, clave2 int) int {
+		if clave1 < clave2 {
+			return -1
+		} else if clave1 > clave2 {
+			return 1
+		}
+		return 0
+	})
+
+	claves := []int{1, 2, 3, 4, 5, 6, 7}
+	for i, clave := range claves {
+		dic.Guardar(clave, i)
+	}
+
+	rango := []int{0, 5}
+	recorridas := make(map[int]bool)
+
+	dic.IterarRango(nil, &rango[1], func(clave int, valor int) bool {
+		recorridas[clave] = true
+		return true
+	})
+
+	require.True(t, recorridas[1], "Debería haberse recorrido la clave 1")
+	require.True(t, recorridas[2], "Debería haberse recorrido la clave 2")
+	require.True(t, recorridas[3], "Debería haberse recorrido la clave 3")
+	require.True(t, recorridas[4], "Debería haberse recorrido la clave 4")
+	require.True(t, recorridas[5], "Debería haberse recorrido la clave 5")
+	require.False(t, recorridas[6], "No debería haberse recorrido la clave 6")
+	require.False(t, recorridas[7], "No debería haberse recorrido la clave 7")
+}
+
+func TestIterarRangoSinLimiteSuperior(t *testing.T) {
+	dic := TDADiccionario.CrearABB[int, int](func(clave1, clave2 int) int {
+		if clave1 < clave2 {
+			return -1
+		} else if clave1 > clave2 {
+			return 1
+		}
+		return 0
+	})
+
+	claves := []int{1, 2, 3, 4, 5, 6, 7}
+	for i, clave := range claves {
+		dic.Guardar(clave, i)
+	}
+
+	rango := []int{5, 0}
+	recorridas := make(map[int]bool)
+
+	dic.IterarRango(&rango[0], nil, func(clave int, valor int) bool {
+		recorridas[clave] = true
+		return true
+	})
+
+	require.True(t, recorridas[5], "Debería haberse recorrido la clave 5")
+	require.True(t, recorridas[6], "Debería haberse recorrido la clave 6")
+	require.True(t, recorridas[7], "Debería haberse recorrido la clave 7")
+	require.False(t, recorridas[1], "No debería haberse recorrido la clave 1")
+	require.False(t, recorridas[2], "No debería haberse recorrido la clave 2")
+	require.False(t, recorridas[3], "No debería haberse recorrido la clave 3")
+	require.False(t, recorridas[4], "No debería haberse recorrido la clave 4")
+}
+
+func TestIterarRangoSinLimites(t *testing.T) {
+	dic := TDADiccionario.CrearABB[int, int](func(clave1, clave2 int) int {
+		if clave1 < clave2 {
+			return -1
+		} else if clave1 > clave2 {
+			return 1
+		}
+		return 0
+	})
+
+	claves := []int{1, 2, 3, 4, 5, 6, 7}
+	for i, clave := range claves {
+		dic.Guardar(clave, i)
+	}
+
+	recorridas := make(map[int]bool)
+
+	dic.IterarRango(nil, nil, func(clave int, valor int) bool {
+		recorridas[clave] = true
+		return true
+	})
+
+	require.True(t, recorridas[1], "Debería haberse recorrido la clave 1")
+	require.True(t, recorridas[2], "Debería haberse recorrido la clave 2")
+	require.True(t, recorridas[3], "Debería haberse recorrido la clave 3")
+	require.True(t, recorridas[4], "Debería haberse recorrido la clave 4")
+	require.True(t, recorridas[5], "Debería haberse recorrido la clave 5")
+	require.True(t, recorridas[6], "Debería haberse recorrido la clave 6")
+	require.True(t, recorridas[7], "Debería haberse recorrido la clave 7")
+}
+
+func TestIteradorRango(t *testing.T) {
+	dic := TDADiccionario.CrearABB[int, int](func(clave1, clave2 int) int {
+		if clave1 < clave2 {
+			return -1
+		} else if clave1 > clave2 {
+			return 1
+		}
+		return 0
+	})
+
+	claves := []int{1, 2, 3, 4, 5, 6, 7}
+	for i, clave := range claves {
+		dic.Guardar(clave, i)
+	}
+
+	rango := []int{2, 5}
+	recorridas := make(map[int]bool)
+
+	iter := dic.IteradorRango(&rango[0], &rango[1])
+	for iter.HayAlgoMas() {
+		c, _ := iter.VerActual()
+		recorridas[c] = true
+		iter.Avanzar()
+	}
+
+	require.EqualValues(t, 4, len(recorridas), "Se deberían haber recorrido 4 claves")
+	require.True(t, recorridas[2], "Debería haberse recorrido la clave 2")
+	require.True(t, recorridas[3], "Debería haberse recorrido la clave 3")
+	require.True(t, recorridas[4], "Debería haberse recorrido la clave 4")
+	require.True(t, recorridas[5], "Debería haberse recorrido la clave 5")
+	require.False(t, recorridas[1], "No debería haberse recorrido la clave 1")
+	require.False(t, recorridas[6], "No debería haberse recorrido la clave 6")
+	require.False(t, recorridas[7], "No debería haberse recorrido la clave 7")
+}
+
+func TestIteradorRangoSinLimiteInferior(t *testing.T) {
+	dic := TDADiccionario.CrearABB[int, int](func(clave1, clave2 int) int {
+		if clave1 < clave2 {
+			return -1
+		} else if clave1 > clave2 {
+			return 1
+		}
+		return 0
+	})
+
+	claves := []int{1, 2, 3, 4, 5, 6, 7}
+	for i, clave := range claves {
+		dic.Guardar(clave, i)
+	}
+
+	rango := []int{2, 5}
+	recorridas := make(map[int]bool)
+
+	iter := dic.IteradorRango(nil, &rango[1])
+	for iter.HayAlgoMas() {
+		c, _ := iter.VerActual()
+		recorridas[c] = true
+		iter.Avanzar()
+	}
+
+	require.EqualValues(t, 5, len(recorridas), "Se deberían haber recorrido 5 claves")
+	require.True(t, recorridas[1], "Debería haberse recorrido la clave 1")
+	require.True(t, recorridas[2], "Debería haberse recorrido la clave 2")
+	require.True(t, recorridas[3], "Debería haberse recorrido la clave 3")
+	require.True(t, recorridas[4], "Debería haberse recorrido la clave 4")
+	require.True(t, recorridas[5], "Debería haberse recorrido la clave 5")
+	require.False(t, recorridas[6], "No debería haberse recorrido la clave 6")
+	require.False(t, recorridas[7], "No debería haberse recorrido la clave 7")
+}
+
+func TestIteradorRangoSinLimiteSuperior(t *testing.T) {
+	dic := TDADiccionario.CrearABB[int, int](func(clave1, clave2 int) int {
+		if clave1 < clave2 {
+			return -1
+		} else if clave1 > clave2 {
+			return 1
+		}
+		return 0
+	})
+
+	claves := []int{1, 2, 3, 4, 5, 6, 7}
+	for i, clave := range claves {
+		dic.Guardar(clave, i)
+	}
+
+	rango := []int{2, 5}
+	recorridas := make(map[int]bool)
+
+	iter := dic.IteradorRango(&rango[0], nil)
+	for iter.HayAlgoMas() {
+		c, _ := iter.VerActual()
+		recorridas[c] = true
+		iter.Avanzar()
+	}
+
+	require.EqualValues(t, 6, len(recorridas), "Se deberían haber recorrido 6 claves")
+	require.True(t, recorridas[2], "Debería haberse recorrido la clave 2")
+	require.True(t, recorridas[3], "Debería haberse recorrido la clave 3")
+	require.True(t, recorridas[4], "Debería haberse recorrido la clave 4")
+	require.True(t, recorridas[5], "Debería haberse recorrido la clave 5")
+	require.True(t, recorridas[6], "Debería haberse recorrido la clave 6")
+	require.True(t, recorridas[7], "Debería haberse recorrido la clave 7")
+	require.False(t, recorridas[1], "No debería haberse recorrido la clave 1")
+}
+
+func TestIteradorRangoSinLimites(t *testing.T) {
+	dic := TDADiccionario.CrearABB[int, int](func(clave1, clave2 int) int {
+		if clave1 < clave2 {
+			return -1
+		} else if clave1 > clave2 {
+			return 1
+		}
+		return 0
+	})
+
+	claves := []int{1, 2, 3, 4, 5, 6, 7}
+	for i, clave := range claves {
+		dic.Guardar(clave, i)
+	}
+
+	recorridas := make(map[int]bool)
+
+	iter := dic.IteradorRango(nil, nil)
+	for iter.HayAlgoMas() {
+		c, _ := iter.VerActual()
+		recorridas[c] = true
+		iter.Avanzar()
+	}
+
+	require.EqualValues(t, 7, len(recorridas), "Se deberían haber recorrido 7 claves")
+	require.True(t, recorridas[1], "Debería haberse recorrido la clave 1")
+	require.True(t, recorridas[2], "Debería haberse recorrido la clave 2")
+	require.True(t, recorridas[3], "Debería haberse recorrido la clave 3")
+	require.True(t, recorridas[4], "Debería haberse recorrido la clave 4")
+	require.True(t, recorridas[5], "Debería haberse recorrido la clave 5")
+	require.True(t, recorridas[6], "Debería haberse recorrido la clave 6")
+	require.True(t, recorridas[7], "Debería haberse recorrido la clave 7")
+}

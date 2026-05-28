@@ -157,9 +157,11 @@ func (nodo *nodoAbb[K, V]) iterar(visitar func(clave K, dato V) bool) {
 	}
 
 	nodo.izq.iterar(visitar)
+
 	if !visitar(nodo.clave, nodo.dato) {
 		return
 	}
+
 	nodo.der.iterar(visitar)
 }
 
@@ -174,11 +176,11 @@ func (nodo *nodoAbb[K, V]) iterarRango(arbol *abb[K, V], desde *K, hasta *K, vis
 		return
 	}
 
-	if arbol.funcion_cmp(nodo.clave, *hasta) > 0 {
+	if desde == nil || arbol.funcion_cmp(nodo.clave, *desde) >= 0 {
 		nodo.izq.iterarRango(arbol, desde, hasta, visitar)
 	}
 
-	if arbol.funcion_cmp(nodo.clave, *desde) > 0 && arbol.funcion_cmp(nodo.clave, *hasta) < 0 {
+	if (desde == nil || arbol.funcion_cmp(nodo.clave, *desde) >= 0) && (hasta == nil || arbol.funcion_cmp(nodo.clave, *hasta) <= 0) {
 		nodo.izq.iterarRango(arbol, desde, hasta, visitar)
 
 		if !visitar(nodo.clave, nodo.dato) {
@@ -188,7 +190,7 @@ func (nodo *nodoAbb[K, V]) iterarRango(arbol *abb[K, V], desde *K, hasta *K, vis
 		nodo.der.iterarRango(arbol, desde, hasta, visitar)
 	}
 
-	if arbol.funcion_cmp(nodo.clave, *desde) < 0 {
+	if hasta == nil || arbol.funcion_cmp(nodo.clave, *hasta) <= 0 {
 		nodo.der.iterarRango(arbol, desde, hasta, visitar)
 	}
 }
