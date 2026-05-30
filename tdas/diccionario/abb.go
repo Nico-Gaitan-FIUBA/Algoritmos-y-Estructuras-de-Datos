@@ -195,21 +195,21 @@ func (nodo *nodoAbb[K, V]) iterarRango(arbol *abb[K, V], desde *K, hasta *K, vis
 	}
 }
 
-func (i *iterDiccionarioAbb[K, V]) buscarMinimoEnRango(nodo *nodoAbb[K, V]) {
+func (i *iterDiccionarioAbb[K, V]) buscarNodoEnRango(nodo *nodoAbb[K, V]) {
 	if nodo == nil {
 		return
 	}
 	if i.hasta != nil && i.arbol.funcion_cmp(nodo.clave, *i.hasta) > 0 {
-		i.buscarMinimoEnRango(nodo.izq)
+		i.buscarNodoEnRango(nodo.izq)
 		return
 	}
 	if i.desde != nil && i.arbol.funcion_cmp(nodo.clave, *i.desde) < 0 {
-		i.buscarMinimoEnRango(nodo.der)
+		i.buscarNodoEnRango(nodo.der)
 		return
 	}
 
 	i.pila.Apilar(nodo)
-	i.buscarMinimoEnRango(nodo.izq)
+	i.buscarNodoEnRango(nodo.izq)
 }
 
 func (a *abb[K, V]) Iterador() IterDiccionario[K, V] {
@@ -225,7 +225,7 @@ func (a *abb[K, V]) IteradorRango(desde *K, hasta *K) IterDiccionario[K, V] {
 	}
 
 	if a.raiz != nil {
-		iterador.buscarMinimoEnRango(a.raiz)
+		iterador.buscarNodoEnRango(a.raiz)
 	}
 	return iterador
 }
@@ -249,6 +249,6 @@ func (i *iterDiccionarioAbb[K, V]) Avanzar() {
 	nodoActual := i.pila.Desapilar()
 
 	if nodoActual.der != nil {
-		i.buscarMinimoEnRango(nodoActual.der)
+		i.buscarNodoEnRango(nodoActual.der)
 	}
 }

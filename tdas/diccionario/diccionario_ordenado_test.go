@@ -841,21 +841,19 @@ func TestIterarRango(t *testing.T) {
 	}
 
 	rango := []int{2, 5}
-	recorridas := make(map[int]bool)
+	recorridas := []int{}
 
 	dic.IterarRango(&rango[0], &rango[1], func(clave int, valor int) bool {
-		recorridas[clave] = true
+		if len(recorridas) < len(claves) {
+			recorridas = append(recorridas, clave)
+		}
 		return true
 	})
 
-	require.EqualValues(t, 4, len(recorridas), "Se deberían haber recorrido 4 claves")
-	require.True(t, recorridas[2], "Debería haberse recorrido la clave 2")
-	require.True(t, recorridas[3], "Debería haberse recorrido la clave 3")
-	require.True(t, recorridas[4], "Debería haberse recorrido la clave 4")
-	require.True(t, recorridas[5], "Debería haberse recorrido la clave 5")
-	require.False(t, recorridas[1], "No debería haberse recorrido la clave 1")
-	require.False(t, recorridas[6], "No debería haberse recorrido la clave 6")
-	require.False(t, recorridas[7], "No debería haberse recorrido la clave 7")
+	require.EqualValues(t, 2, recorridas[0], "Debería haberse recorrido la clave 2")
+	require.EqualValues(t, 3, recorridas[1], "Debería haberse recorrido la clave 3")
+	require.EqualValues(t, 4, recorridas[2], "Debería haberse recorrido la clave 4")
+	require.EqualValues(t, 5, recorridas[3], "Debería haberse recorrido la clave 5")
 }
 
 func TestIterarRangoSinLimiteInferior(t *testing.T) {
@@ -874,20 +872,18 @@ func TestIterarRangoSinLimiteInferior(t *testing.T) {
 	}
 
 	rango := []int{0, 5}
-	recorridas := make(map[int]bool)
+	recorridas := []int{}
 
 	dic.IterarRango(nil, &rango[1], func(clave int, valor int) bool {
-		recorridas[clave] = true
+		recorridas = append(recorridas, clave)
 		return true
 	})
 
-	require.True(t, recorridas[1], "Debería haberse recorrido la clave 1")
-	require.True(t, recorridas[2], "Debería haberse recorrido la clave 2")
-	require.True(t, recorridas[3], "Debería haberse recorrido la clave 3")
-	require.True(t, recorridas[4], "Debería haberse recorrido la clave 4")
-	require.True(t, recorridas[5], "Debería haberse recorrido la clave 5")
-	require.False(t, recorridas[6], "No debería haberse recorrido la clave 6")
-	require.False(t, recorridas[7], "No debería haberse recorrido la clave 7")
+	require.EqualValues(t, 1, recorridas[0], "Debería haberse recorrido la clave 1")
+	require.EqualValues(t, 2, recorridas[1], "Debería haberse recorrido la clave 2")
+	require.EqualValues(t, 3, recorridas[2], "Debería haberse recorrido la clave 3")
+	require.EqualValues(t, 4, recorridas[3], "Debería haberse recorrido la clave 4")
+	require.EqualValues(t, 5, recorridas[4], "Debería haberse recorrido la clave 5")
 }
 
 func TestIterarRangoSinLimiteSuperior(t *testing.T) {
@@ -906,20 +902,16 @@ func TestIterarRangoSinLimiteSuperior(t *testing.T) {
 	}
 
 	rango := []int{5, 0}
-	recorridas := make(map[int]bool)
+	recorridas := []int{}
 
 	dic.IterarRango(&rango[0], nil, func(clave int, valor int) bool {
-		recorridas[clave] = true
+		recorridas = append(recorridas, clave)
 		return true
 	})
 
-	require.True(t, recorridas[5], "Debería haberse recorrido la clave 5")
-	require.True(t, recorridas[6], "Debería haberse recorrido la clave 6")
-	require.True(t, recorridas[7], "Debería haberse recorrido la clave 7")
-	require.False(t, recorridas[1], "No debería haberse recorrido la clave 1")
-	require.False(t, recorridas[2], "No debería haberse recorrido la clave 2")
-	require.False(t, recorridas[3], "No debería haberse recorrido la clave 3")
-	require.False(t, recorridas[4], "No debería haberse recorrido la clave 4")
+	require.EqualValues(t, 5, recorridas[0], "Debería haberse recorrido la clave 5")
+	require.EqualValues(t, 6, recorridas[1], "Debería haberse recorrido la clave 6")
+	require.EqualValues(t, 7, recorridas[2], "Debería haberse recorrido la clave 7")
 }
 
 func TestIterarRangoSinLimites(t *testing.T) {
@@ -937,20 +929,23 @@ func TestIterarRangoSinLimites(t *testing.T) {
 		dic.Guardar(clave, i)
 	}
 
-	recorridas := make(map[int]bool)
+	recorridas := []int{}
 
 	dic.IterarRango(nil, nil, func(clave int, valor int) bool {
-		recorridas[clave] = true
+		if len(recorridas) < len(claves) {
+			recorridas = append(recorridas, clave)
+		}
 		return true
 	})
 
-	require.True(t, recorridas[1], "Debería haberse recorrido la clave 1")
-	require.True(t, recorridas[2], "Debería haberse recorrido la clave 2")
-	require.True(t, recorridas[3], "Debería haberse recorrido la clave 3")
-	require.True(t, recorridas[4], "Debería haberse recorrido la clave 4")
-	require.True(t, recorridas[5], "Debería haberse recorrido la clave 5")
-	require.True(t, recorridas[6], "Debería haberse recorrido la clave 6")
-	require.True(t, recorridas[7], "Debería haberse recorrido la clave 7")
+	require.EqualValues(t, 7, len(recorridas), "Se deberían haber recorrido todas las claves")
+	require.EqualValues(t, 1, recorridas[0], "Debería haberse recorrido la clave 1")
+	require.EqualValues(t, 2, recorridas[1], "Debería haberse recorrido la clave 2")
+	require.EqualValues(t, 3, recorridas[2], "Debería haberse recorrido la clave 3")
+	require.EqualValues(t, 4, recorridas[3], "Debería haberse recorrido la clave 4")
+	require.EqualValues(t, 5, recorridas[4], "Debería haberse recorrido la clave 5")
+	require.EqualValues(t, 6, recorridas[5], "Debería haberse recorrido la clave 6")
+	require.EqualValues(t, 7, recorridas[6], "Debería haberse recorrido la clave 7")
 }
 
 func TestIteradorRango(t *testing.T) {
@@ -969,23 +964,21 @@ func TestIteradorRango(t *testing.T) {
 	}
 
 	rango := []int{2, 5}
-	recorridas := make(map[int]bool)
+	recorridas := []int{}
 
 	iter := dic.IteradorRango(&rango[0], &rango[1])
 	for iter.HayAlgoMas() {
 		c, _ := iter.VerActual()
-		recorridas[c] = true
+		if len(recorridas) < len(claves) {
+			recorridas = append(recorridas, c)
+		}
 		iter.Avanzar()
 	}
 
-	require.EqualValues(t, 4, len(recorridas), "Se deberían haber recorrido 4 claves")
-	require.True(t, recorridas[2], "Debería haberse recorrido la clave 2")
-	require.True(t, recorridas[3], "Debería haberse recorrido la clave 3")
-	require.True(t, recorridas[4], "Debería haberse recorrido la clave 4")
-	require.True(t, recorridas[5], "Debería haberse recorrido la clave 5")
-	require.False(t, recorridas[1], "No debería haberse recorrido la clave 1")
-	require.False(t, recorridas[6], "No debería haberse recorrido la clave 6")
-	require.False(t, recorridas[7], "No debería haberse recorrido la clave 7")
+	require.EqualValues(t, 2, recorridas[0], "Debería haberse recorrido la clave 2")
+	require.EqualValues(t, 3, recorridas[1], "Debería haberse recorrido la clave 3")
+	require.EqualValues(t, 4, recorridas[2], "Debería haberse recorrido la clave 4")
+	require.EqualValues(t, 5, recorridas[3], "Debería haberse recorrido la clave 5")
 }
 
 func TestIteradorRangoSinLimiteInferior(t *testing.T) {
@@ -1004,23 +997,23 @@ func TestIteradorRangoSinLimiteInferior(t *testing.T) {
 	}
 
 	rango := []int{2, 5}
-	recorridas := make(map[int]bool)
+	recorridas := []int{}
 
 	iter := dic.IteradorRango(nil, &rango[1])
 	for iter.HayAlgoMas() {
 		c, _ := iter.VerActual()
-		recorridas[c] = true
+		if len(recorridas) < len(claves) {
+			recorridas = append(recorridas, c)
+		}
 		iter.Avanzar()
 	}
 
 	require.EqualValues(t, 5, len(recorridas), "Se deberían haber recorrido 5 claves")
-	require.True(t, recorridas[1], "Debería haberse recorrido la clave 1")
-	require.True(t, recorridas[2], "Debería haberse recorrido la clave 2")
-	require.True(t, recorridas[3], "Debería haberse recorrido la clave 3")
-	require.True(t, recorridas[4], "Debería haberse recorrido la clave 4")
-	require.True(t, recorridas[5], "Debería haberse recorrido la clave 5")
-	require.False(t, recorridas[6], "No debería haberse recorrido la clave 6")
-	require.False(t, recorridas[7], "No debería haberse recorrido la clave 7")
+	require.EqualValues(t, 1, recorridas[0], "Debería haberse recorrido la clave 1")
+	require.EqualValues(t, 2, recorridas[1], "Debería haberse recorrido la clave 2")
+	require.EqualValues(t, 3, recorridas[2], "Debería haberse recorrido la clave 3")
+	require.EqualValues(t, 4, recorridas[3], "Debería haberse recorrido la clave 4")
+	require.EqualValues(t, 5, recorridas[4], "Debería haberse recorrido la clave 5")
 }
 
 func TestIteradorRangoSinLimiteSuperior(t *testing.T) {
@@ -1039,23 +1032,24 @@ func TestIteradorRangoSinLimiteSuperior(t *testing.T) {
 	}
 
 	rango := []int{2, 5}
-	recorridas := make(map[int]bool)
+	recorridas := []int{}
 
 	iter := dic.IteradorRango(&rango[0], nil)
 	for iter.HayAlgoMas() {
 		c, _ := iter.VerActual()
-		recorridas[c] = true
+		if len(recorridas) < len(claves) {
+			recorridas = append(recorridas, c)
+		}
 		iter.Avanzar()
 	}
 
 	require.EqualValues(t, 6, len(recorridas), "Se deberían haber recorrido 6 claves")
-	require.True(t, recorridas[2], "Debería haberse recorrido la clave 2")
-	require.True(t, recorridas[3], "Debería haberse recorrido la clave 3")
-	require.True(t, recorridas[4], "Debería haberse recorrido la clave 4")
-	require.True(t, recorridas[5], "Debería haberse recorrido la clave 5")
-	require.True(t, recorridas[6], "Debería haberse recorrido la clave 6")
-	require.True(t, recorridas[7], "Debería haberse recorrido la clave 7")
-	require.False(t, recorridas[1], "No debería haberse recorrido la clave 1")
+	require.EqualValues(t, 2, recorridas[0], "Debería haberse recorrido la clave 2")
+	require.EqualValues(t, 3, recorridas[1], "Debería haberse recorrido la clave 3")
+	require.EqualValues(t, 4, recorridas[2], "Debería haberse recorrido la clave 4")
+	require.EqualValues(t, 5, recorridas[3], "Debería haberse recorrido la clave 5")
+	require.EqualValues(t, 6, recorridas[4], "Debería haberse recorrido la clave 6")
+	require.EqualValues(t, 7, recorridas[5], "Debería haberse recorrido la clave 7")
 }
 
 func TestIteradorRangoSinLimites(t *testing.T) {
@@ -1073,21 +1067,23 @@ func TestIteradorRangoSinLimites(t *testing.T) {
 		dic.Guardar(clave, i)
 	}
 
-	recorridas := make(map[int]bool)
+	recorridas := []int{}
 
 	iter := dic.IteradorRango(nil, nil)
 	for iter.HayAlgoMas() {
 		c, _ := iter.VerActual()
-		recorridas[c] = true
+		if len(recorridas) < len(claves) {
+			recorridas = append(recorridas, c)
+		}
 		iter.Avanzar()
 	}
 
 	require.EqualValues(t, 7, len(recorridas), "Se deberían haber recorrido 7 claves")
-	require.True(t, recorridas[1], "Debería haberse recorrido la clave 1")
-	require.True(t, recorridas[2], "Debería haberse recorrido la clave 2")
-	require.True(t, recorridas[3], "Debería haberse recorrido la clave 3")
-	require.True(t, recorridas[4], "Debería haberse recorrido la clave 4")
-	require.True(t, recorridas[5], "Debería haberse recorrido la clave 5")
-	require.True(t, recorridas[6], "Debería haberse recorrido la clave 6")
-	require.True(t, recorridas[7], "Debería haberse recorrido la clave 7")
+	require.EqualValues(t, 1, recorridas[0], "Debería haberse recorrido la clave 1")
+	require.EqualValues(t, 2, recorridas[1], "Debería haberse recorrido la clave 2")
+	require.EqualValues(t, 3, recorridas[2], "Debería haberse recorrido la clave 3")
+	require.EqualValues(t, 4, recorridas[3], "Debería haberse recorrido la clave 4")
+	require.EqualValues(t, 5, recorridas[4], "Debería haberse recorrido la clave 5")
+	require.EqualValues(t, 6, recorridas[5], "Debería haberse recorrido la clave 6")
+	require.EqualValues(t, 7, recorridas[6], "Debería haberse recorrido la clave 7")
 }
