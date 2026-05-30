@@ -252,3 +252,54 @@ func (i *iterDiccionarioAbb[K, V]) Avanzar() {
 		i.buscarNodoEnRango(nodoActual.der)
 	}
 }
+
+// Fijate que ahora devuelve bool al final
+func (nodo *nodoAbb[K, V]) iterarRango(arbol *abb[K, V], desde *K, hasta *K, visitar func(clave K, dato V) bool) bool {
+	if nodo == nil {
+		return true
+	}
+
+	// Si cumple, vamos a la izquierda. ¡Y vigilamos si cortan la iteración!
+	if desde == nil || arbol.funcion_cmp(nodo.clave, *desde) >= 0 {
+		if !nodo.izq.iterarRango(arbol, desde, hasta, visitar) {
+			return false
+		}
+	}
+
+	// Verificamos si estamos dentro del rango
+	if (desde == nil || arbol.funcion_cmp(nodo.clave, *desde) >= 0) && (hasta == nil || arbol.funcion_cmp(nodo.clave, *hasta) <= 0) {
+		// Visitamos. Si el usuario dice "basta", avisamos hacia arriba
+		if !visitar(nodo.clave, nodo.dato) {
+			return false
+		}
+	}
+
+	// Si cumple, vamos a la derecha. ¡Y vigilamos si cortan la iteración!
+	if hasta == nil || arbol.funcion_cmp(nodo.clave, *hasta) <= 0 {
+		if !nodo.der.iterarRango(arbol, desde, hasta, visitar) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// Fijate que ahora devuelve bool al final
+func (nodo *nodoAbb[K, V]) iterar(visitar func(clave K, dato V) bool) bool {
+	if nodo == nil {
+		return true // true significa "todo bien, podés seguir"
+	}
+
+	// 1. Vamos a la izquierda, si nos dice false, propagamos el false hacia arriba
+	if !nodo.izq.iterar(visitar) {
+		return false
+	}
+
+	// 2. Visitamos el actual. Si da false, cortamos y avisamos hacia arriba
+	if !visitar(nodo.clave, nodo.dato) {
+		return false
+	}
+
+	// 3. Vamos a la derecha y devolvemos lo que sea que pase ahí
+	return nodo.der.iterar(visitar)
+}
