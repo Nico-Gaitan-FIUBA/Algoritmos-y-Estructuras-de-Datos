@@ -98,6 +98,10 @@ func (h *heap[T]) VerMax() T {
 }
 
 func (h *heap[T]) Desencolar() T {
+	if h.EstaVacia() {
+		panic("La cola esta vacia")
+	}
+
 	posUltimoELem := len(h.arr) - 1
 	elemDesencolado := h.arr[PRIMER_POS]
 
