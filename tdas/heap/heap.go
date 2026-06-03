@@ -44,13 +44,12 @@ func (h *heap[T]) swap(i, j int) {
 
 func (h *heap[T]) upHeap(elem T, pos int) {
 	padre, posPadre := h.buscoPosPadre(pos)
-	if posPadre == PRIMER_POS {
+	if h.funcion_cmp(elem, padre) <= 0 {
 		return
 	}
-	if h.funcion_cmp(elem, padre) > 0 {
-		h.swap(pos, posPadre)
-		h.upHeap(elem, posPadre)
-	}
+	h.swap(pos, posPadre)
+	h.upHeap(elem, posPadre)
+
 }
 
 func (h *heap[T]) downHeap(elem T, pos int) {
@@ -85,7 +84,7 @@ func (h *heap[T]) EstaVacia() bool {
 
 func (h *heap[T]) Encolar(elem T) {
 	h.arr = append(h.arr, elem)
-	if len(h.arr)-1 > UN_ELEMENTO {
+	if len(h.arr) > UN_ELEMENTO {
 		h.upHeap(elem, len(h.arr)-1)
 	}
 }
