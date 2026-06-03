@@ -58,17 +58,25 @@ func (h *heap[T]) downHeap(elem T, pos int) {
 	hijoDerecho, posHijoDerecho := h.buscoPosHijoDerecho(pos)
 	hijoMayor := hijoDerecho
 	posHijoMayor := posHijoDerecho
-	mayor := elem
+	posDelMayor := pos
 
-	if h.funcion_cmp(hijoIzquierdo, hijoDerecho) > 0 {
+	switch {
+	case posHijoIzquierdo >= len(h.arr):
+		return
+	case posHijoDerecho >= len(h.arr):
 		hijoMayor = hijoIzquierdo
 		posHijoMayor = posHijoIzquierdo
+	default:
+		if h.funcion_cmp(hijoIzquierdo, hijoDerecho) > 0 {
+			hijoMayor = hijoIzquierdo
+			posHijoMayor = posHijoIzquierdo
+		}
 	}
 	if h.funcion_cmp(hijoMayor, elem) > 0 {
-		mayor = hijoMayor
+		posDelMayor = posHijoMayor
+		h.swap(pos, posDelMayor)
+		h.downHeap(elem, posDelMayor)
 	}
-	h.swap(pos, mayor)
-
 }
 
 func (h *heap[T]) EstaVacia() bool {
@@ -90,16 +98,16 @@ func (h *heap[T]) VerMax() T {
 }
 
 func (h *heap[T]) Desencolar() T {
-	posUltimoELem := len(h.arr) - 1    // posicion = 6
-	ultimoElem := h.arr[posUltimoELem] //ultimo elemento = 20
+	posUltimoELem := len(h.arr) - 1
+	elemDesencolado := h.arr[PRIMER_POS]
 
-	h.swap(PRIMER_POS, posUltimoELem) //ultimo elemento = 12 y primer elemento = 20
-	h.arr = h.arr[:posUltimoELem-1]
+	h.swap(PRIMER_POS, posUltimoELem)
+	h.arr = h.arr[:posUltimoELem]
 
-	primerElem := h.arr[PRIMER_POS] // primer elemento = 20
+	primerElem := h.arr[PRIMER_POS]
 	h.downHeap(primerElem, PRIMER_POS)
 
-	return ultimoElem
+	return elemDesencolado
 }
 
 func (h *heap[T]) Cantidad() int {
