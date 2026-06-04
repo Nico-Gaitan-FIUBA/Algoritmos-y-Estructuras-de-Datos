@@ -144,3 +144,164 @@ func TestColaPrioridadEncolarDespuesDeVaciar(t *testing.T) {
 	require.Equal(t, 5, cola.VerMax())
 
 }
+
+func TestColaPrioridadConElementosRepetidos(t *testing.T) {
+	cola := CrearColaPrioridad(func(a, b int) int {
+		return b - a
+	})
+	cola.Encolar(10)
+	cola.Encolar(10)
+	cola.Encolar(20)
+	cola.Encolar(20)
+
+	require.False(t, cola.EstaVacia())
+	require.Equal(t, 4, cola.Cantidad())
+	require.Equal(t, 10, cola.VerMax())
+}
+
+func TestColaPrioridadConElementosRepetidosDesencolar(t *testing.T) {
+	cola := CrearColaPrioridad(func(a, b int) int {
+		return b - a
+	})
+	cola.Encolar(10)
+	cola.Encolar(10)
+	cola.Encolar(20)
+	cola.Encolar(20)
+
+	require.Equal(t, 10, cola.Desencolar())
+	require.Equal(t, 10, cola.Desencolar())
+	require.Equal(t, 20, cola.Desencolar())
+	require.Equal(t, 20, cola.Desencolar())
+	require.True(t, cola.EstaVacia())
+	require.Equal(t, 0, cola.Cantidad())
+	require.PanicsWithValue(t, "La cola esta vacia", func() { cola.VerMax() })
+}
+
+func TestColaPrioridadHeapifyArrVacio(t *testing.T) {
+	arr := []int{}
+	cola := CrearHeapArr(arr, func(a, b int) int {
+		return a - b
+	})
+
+	require.True(t, cola.EstaVacia())
+	require.Equal(t, 0, cola.Cantidad())
+	require.PanicsWithValue(t, "La cola esta vacia", func() { cola.VerMax() })
+}
+func TestColaPrioridadHeapify(t *testing.T) {
+	arr := []int{66, 10, 90, 14, 35}
+	cola := CrearHeapArr(arr, func(a, b int) int {
+		return b - a
+	})
+
+	require.False(t, cola.EstaVacia())
+	require.Equal(t, 5, cola.Cantidad())
+	require.Equal(t, 10, cola.VerMax())
+	require.Equal(t, 10, cola.Desencolar())
+	cola.Encolar(5)
+	require.Equal(t, 5, cola.VerMax())
+}
+
+func TestColaPrioridadHeapifyVaciar(t *testing.T) {
+	arr := []int{66, 10, 90, 14, 35}
+	cola := CrearHeapArr(arr, func(a, b int) int {
+		return a - b
+	})
+
+	require.Equal(t, 90, cola.Desencolar())
+	require.Equal(t, 66, cola.Desencolar())
+	require.Equal(t, 35, cola.Desencolar())
+	require.Equal(t, 14, cola.Desencolar())
+	require.Equal(t, 10, cola.Desencolar())
+
+	require.True(t, cola.EstaVacia())
+	require.Equal(t, 0, cola.Cantidad())
+	require.PanicsWithValue(t, "La cola esta vacia", func() { cola.VerMax() })
+
+}
+
+func TestColaPrioridadHeapifyEncolarDespuesDeVaciar(t *testing.T) {
+	arr := []int{66, 10, 90, 14, 35}
+	cola := CrearHeapArr(arr, func(a, b int) int {
+		return a - b
+	})
+
+	require.Equal(t, 90, cola.Desencolar())
+	require.Equal(t, 66, cola.Desencolar())
+	require.Equal(t, 35, cola.Desencolar())
+	require.Equal(t, 14, cola.Desencolar())
+	require.Equal(t, 10, cola.Desencolar())
+
+	require.True(t, cola.EstaVacia())
+	require.Equal(t, 0, cola.Cantidad())
+	require.PanicsWithValue(t, "La cola esta vacia", func() { cola.VerMax() })
+
+	cola.Encolar(5)
+	cola.Encolar(14)
+	cola.Encolar(8)
+
+	require.False(t, cola.EstaVacia())
+	require.Equal(t, 3, cola.Cantidad())
+	require.Equal(t, 14, cola.VerMax())
+
+}
+
+func TestColaPrioridadHeapifyConElementosRepetidos(t *testing.T) {
+	arr := []int{10, 10, 20, 20}
+	cola := CrearHeapArr(arr, func(a, b int) int {
+		return a - b
+	})
+
+	require.False(t, cola.EstaVacia())
+	require.Equal(t, 4, cola.Cantidad())
+	require.Equal(t, 20, cola.VerMax())
+}
+
+func TestColaPrioridadHeapSort(t *testing.T) {
+	arr := []int{66, 10, 90, 14, 35}
+
+	cmp := func(a, b int) int { return a - b }
+	HeapSort(arr, cmp)
+	require.Equal(t, []int{10, 14, 35, 66, 90}, arr)
+}
+
+func TestColaPrioridadVolumen(t *testing.T) {
+	cola := CrearColaPrioridad(func(a, b int) int {
+		return a - b
+	})
+
+	for i := 0; i < 1000000; i++ {
+		cola.Encolar(i)
+	}
+
+	require.False(t, cola.EstaVacia())
+	require.Equal(t, 1000000, cola.Cantidad())
+	require.Equal(t, 999999, cola.VerMax())
+
+	for i := 999999; i >= 0; i-- {
+		require.Equal(t, i, cola.Desencolar())
+	}
+	require.True(t, cola.EstaVacia())
+	require.Equal(t, 0, cola.Cantidad())
+	require.PanicsWithValue(t, "La cola esta vacia", func() { cola.VerMax() })
+}
+
+func TestColaPrioridadHeapifyVolumen(t *testing.T) {
+	arr := make([]int, 1000000)
+	for i := 0; i < 1000000; i++ {
+		arr[i] = i
+	}
+	cola := CrearHeapArr(arr, func(a, b int) int {
+		return a - b
+	})
+
+	require.False(t, cola.EstaVacia())
+	require.Equal(t, 1000000, cola.Cantidad())
+	require.Equal(t, 999999, cola.VerMax())
+
+	for i := 999999; i >= 0; i-- {
+		require.Equal(t, i, cola.Desencolar())
+	}
+	require.True(t, cola.EstaVacia())
+	require.Equal(t, 0, cola.Cantidad())
+	require.PanicsWithValue(t, "La cola esta vacia", func() { cola.VerMax() })
+}
