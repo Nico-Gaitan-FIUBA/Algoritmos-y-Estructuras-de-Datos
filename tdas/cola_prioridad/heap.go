@@ -7,6 +7,7 @@ const (
 
 type heap[T any] struct {
 	arr         []T
+	cantidad    int
 	funcion_cmp func(T, T) int
 }
 
@@ -16,12 +17,15 @@ type heap[T any] struct {
 //     Un entero mayor que 0 si la primera clave es mayor que la segunda. --> positivo si 1era > 2da
 //     0 si ambas claves son iguales.
 
-func CrearColaPrioridad[T any](funcion_cmp func(T, T) int) ColaPrioridad[T] {
-	return &heap[T]{arr: []T{}, funcion_cmp: funcion_cmp}
+func CrearHeap[T any](funcion_cmp func(T, T) int) ColaPrioridad[T] {
+	return &heap[T]{arr: []T{}, cantidad: 0, funcion_cmp: funcion_cmp}
 }
 
 func CrearHeapArr[T any](arreglo []T, funcion_cmp func(T, T) int) ColaPrioridad[T] {
-	h := &heap[T]{arr: arreglo, funcion_cmp: funcion_cmp}
+	copia := make([]T, len(arreglo))
+	copy(copia, arreglo)
+
+	h := &heap[T]{arr: copia, cantidad: len(copia), funcion_cmp: funcion_cmp}
 
 	heapify(h.arr, h.funcion_cmp)
 	return h
@@ -102,13 +106,14 @@ func downHeap[T any](arr []T, cmp func(T, T) int, elem T, pos int) {
 }
 
 func (h *heap[T]) EstaVacia() bool {
-	return len(h.arr) == PRIMER_POS
+	return h.cantidad == PRIMER_POS
 }
 
 func (h *heap[T]) Encolar(elem T) {
 	h.arr = append(h.arr, elem)
-	if len(h.arr) > UN_ELEMENTO {
-		upHeap(h.arr, h.funcion_cmp, elem, len(h.arr)-1)
+	h.cantidad++
+	if h.cantidad > UN_ELEMENTO {
+		upHeap(h.arr, h.funcion_cmp, elem, h.cantidad-1)
 	}
 }
 
@@ -131,6 +136,7 @@ func (h *heap[T]) Desencolar() T {
 	primerElem := h.arr[PRIMER_POS]
 
 	h.arr = h.arr[:posUltimoELem]
+	h.cantidad--
 	if !h.EstaVacia() {
 		downHeap(h.arr, h.funcion_cmp, primerElem, PRIMER_POS)
 	}
@@ -139,5 +145,5 @@ func (h *heap[T]) Desencolar() T {
 }
 
 func (h *heap[T]) Cantidad() int {
-	return len(h.arr)
+	return h.cantidad
 }

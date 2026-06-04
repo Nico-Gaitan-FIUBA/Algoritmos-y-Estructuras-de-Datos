@@ -9,7 +9,7 @@ import (
 )
 
 func TestColaPrioridadVacia(t *testing.T) {
-	cola := TDAColaPrioridad.CrearColaPrioridad(func(a, b int) int {
+	cola := TDAColaPrioridad.CrearHeap(func(a, b int) int {
 		return a - b
 	})
 	require.True(t, cola.EstaVacia())
@@ -19,7 +19,7 @@ func TestColaPrioridadVacia(t *testing.T) {
 }
 
 func TestColaPrioridadEncolarUnElemento(t *testing.T) {
-	cola := TDAColaPrioridad.CrearColaPrioridad(func(a, b int) int {
+	cola := TDAColaPrioridad.CrearHeap(func(a, b int) int {
 		return a - b
 	})
 	cola.Encolar(2026)
@@ -29,7 +29,7 @@ func TestColaPrioridadEncolarUnElemento(t *testing.T) {
 }
 
 func TestColaPrioridadEncolarDosElementos(t *testing.T) {
-	cola := TDAColaPrioridad.CrearColaPrioridad(func(a, b int) int {
+	cola := TDAColaPrioridad.CrearHeap(func(a, b int) int {
 		return a - b
 	})
 	cola.Encolar(10)
@@ -45,7 +45,7 @@ func TestColaPrioridadEncolarDosElementos(t *testing.T) {
 }
 
 func TestColaPrioridadEncolarVariosElementosOrdenados(t *testing.T) {
-	cola := TDAColaPrioridad.CrearColaPrioridad(func(a, b int) int {
+	cola := TDAColaPrioridad.CrearHeap(func(a, b int) int {
 		return a - b
 	})
 	cola.Encolar(1)
@@ -61,7 +61,7 @@ func TestColaPrioridadEncolarVariosElementosOrdenados(t *testing.T) {
 }
 
 func TestColaPrioridadEncolarVariosElementosDesordenados(t *testing.T) {
-	cola := TDAColaPrioridad.CrearColaPrioridad(func(a, b int) int {
+	cola := TDAColaPrioridad.CrearHeap(func(a, b int) int {
 		return a - b
 	})
 	cola.Encolar(66)
@@ -77,7 +77,7 @@ func TestColaPrioridadEncolarVariosElementosDesordenados(t *testing.T) {
 }
 
 func TestColaPrioridadDesencolarUnElemento(t *testing.T) {
-	cola := TDAColaPrioridad.CrearColaPrioridad(func(a, b int) int {
+	cola := TDAColaPrioridad.CrearHeap(func(a, b int) int {
 		return a - b
 	})
 	cola.Encolar(10)
@@ -88,7 +88,7 @@ func TestColaPrioridadDesencolarUnElemento(t *testing.T) {
 }
 
 func TestColaPrioridadDesencolarDosElementos(t *testing.T) {
-	cola := TDAColaPrioridad.CrearColaPrioridad(func(a, b int) int {
+	cola := TDAColaPrioridad.CrearHeap(func(a, b int) int {
 		return a - b
 	})
 	cola.Encolar(11)
@@ -101,7 +101,7 @@ func TestColaPrioridadDesencolarDosElementos(t *testing.T) {
 }
 
 func TestColaPrioridadDesencolarVarioslementos(t *testing.T) {
-	cola := TDAColaPrioridad.CrearColaPrioridad(func(a, b int) int {
+	cola := TDAColaPrioridad.CrearHeap(func(a, b int) int {
 		return a - b
 	})
 	cola.Encolar(11)
@@ -122,7 +122,7 @@ func TestColaPrioridadDesencolarVarioslementos(t *testing.T) {
 }
 
 func TestColaPrioridadEncolarDespuesDeVaciar(t *testing.T) {
-	cola := TDAColaPrioridad.CrearColaPrioridad(func(a, b int) int {
+	cola := TDAColaPrioridad.CrearHeap(func(a, b int) int {
 		return b - a
 	})
 
@@ -148,7 +148,7 @@ func TestColaPrioridadEncolarDespuesDeVaciar(t *testing.T) {
 }
 
 func TestColaPrioridadConElementosRepetidos(t *testing.T) {
-	cola := TDAColaPrioridad.CrearColaPrioridad(func(a, b int) int {
+	cola := TDAColaPrioridad.CrearHeap(func(a, b int) int {
 		return b - a
 	})
 	cola.Encolar(10)
@@ -162,7 +162,7 @@ func TestColaPrioridadConElementosRepetidos(t *testing.T) {
 }
 
 func TestColaPrioridadConElementosRepetidosDesencolar(t *testing.T) {
-	cola := TDAColaPrioridad.CrearColaPrioridad(func(a, b int) int {
+	cola := TDAColaPrioridad.CrearHeap(func(a, b int) int {
 		return b - a
 	})
 	cola.Encolar(10)
@@ -267,7 +267,7 @@ func TestColaPrioridadHeapSort(t *testing.T) {
 }
 
 func TestColaPrioridadVolumen(t *testing.T) {
-	cola := TDAColaPrioridad.CrearColaPrioridad(func(a, b int) int {
+	cola := TDAColaPrioridad.CrearHeap(func(a, b int) int {
 		return a - b
 	})
 
