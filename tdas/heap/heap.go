@@ -23,10 +23,22 @@ func CrearColaPrioridad[T any](funcion_cmp func(T, T) int) ColaPrioridad[T] {
 func CrearHeapArr[T any](arreglo []T, funcion_cmp func(T, T) int) ColaPrioridad[T] {
 	h := &heap[T]{arr: arreglo, funcion_cmp: funcion_cmp}
 
-	for i := len(h.arr)/2 - 1; i >= 0; i-- {
-		downHeap(h.arr, h.funcion_cmp, h.arr[i], i)
-	}
+	heapify(h.arr, h.funcion_cmp)
 	return h
+}
+
+func HeapSort[T any](elementos []T, funcion_cmp func(T, T) int) {
+	heapify(elementos, funcion_cmp)
+	for i := len(elementos) - 1; i > 0; i-- {
+		swap(elementos, 0, i)
+		downHeap(elementos, funcion_cmp, elementos[0], 0)
+	}
+}
+
+func heapify[T any](arr []T, funcion_cmp func(T, T) int) {
+	for i := len(arr)/2 - 1; i >= 0; i-- {
+		downHeap(arr, funcion_cmp, arr[i], i)
+	}
 }
 
 func buscoPosHijoIzquierdo(indice int) int {
@@ -58,7 +70,7 @@ func upHeap[T any](arr []T, cmp func(T, T) int, elem T, pos int) {
 	upHeap(arr, cmp, elem, posPadre)
 }
 
-func downHeap[T any](arr []T, cmp func(T, T) int, elem T, pos int) { // [20, 15, 10, 13, ""]
+func downHeap[T any](arr []T, cmp func(T, T) int, elem T, pos int) {
 	posHijoIzquierdo := buscoPosHijoIzquierdo(pos)
 	posHijoDerecho := buscoPosHijoDerecho(pos)
 	posHijoMayor := posHijoDerecho
