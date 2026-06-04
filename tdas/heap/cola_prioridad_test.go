@@ -84,3 +84,63 @@ func TestColaPrioridadDesencolarUnElemento(t *testing.T) {
 	require.Equal(t, 0, cola.Cantidad())
 	require.PanicsWithValue(t, "La cola esta vacia", func() { cola.VerMax() })
 }
+
+func TestColaPrioridadDesencolarDosElementos(t *testing.T) {
+	cola := CrearColaPrioridad(func(a, b int) int {
+		return a - b
+	})
+	cola.Encolar(11)
+	cola.Encolar(40)
+	require.Equal(t, 40, cola.Desencolar())
+	require.Equal(t, 11, cola.Desencolar())
+	require.True(t, cola.EstaVacia())
+	require.Equal(t, 0, cola.Cantidad())
+	require.PanicsWithValue(t, "La cola esta vacia", func() { cola.VerMax() })
+}
+
+func TestColaPrioridadDesencolarVarioslementos(t *testing.T) {
+	cola := CrearColaPrioridad(func(a, b int) int {
+		return a - b
+	})
+	cola.Encolar(11)
+	cola.Encolar(40)
+	cola.Encolar(20)
+	cola.Encolar(35)
+	cola.Encolar(66)
+
+	require.Equal(t, 66, cola.Desencolar())
+	require.Equal(t, 40, cola.Desencolar())
+	require.Equal(t, 35, cola.Desencolar())
+	require.Equal(t, 20, cola.Desencolar())
+	require.Equal(t, 11, cola.Desencolar())
+	require.True(t, cola.EstaVacia())
+	require.Equal(t, 0, cola.Cantidad())
+	require.PanicsWithValue(t, "La cola esta vacia", func() { cola.VerMax() })
+
+}
+
+func TestColaPrioridadEncolarDespuesDeVaciar(t *testing.T) {
+	cola := CrearColaPrioridad(func(a, b int) int {
+		return b - a
+	})
+
+	cola.Encolar(10)
+	cola.Encolar(20)
+	cola.Encolar(0)
+	require.Equal(t, 0, cola.Desencolar())
+	require.Equal(t, 10, cola.Desencolar())
+	require.Equal(t, 20, cola.Desencolar())
+
+	require.True(t, cola.EstaVacia())
+	require.Equal(t, 0, cola.Cantidad())
+	require.PanicsWithValue(t, "La cola esta vacia", func() { cola.VerMax() })
+
+	cola.Encolar(5)
+	cola.Encolar(14)
+	cola.Encolar(8)
+
+	require.False(t, cola.EstaVacia())
+	require.Equal(t, 3, cola.Cantidad())
+	require.Equal(t, 5, cola.VerMax())
+
+}
