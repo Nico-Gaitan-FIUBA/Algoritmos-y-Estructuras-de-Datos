@@ -29,16 +29,14 @@ func CrearHeapArr[T any](arreglo []T, funcion_cmp func(T, T) int) ColaPrioridad[
 	return h
 }
 
-func buscoPosHijoIzquierdo[T any](arr []T, indice int) (T, int) {
+func buscoPosHijoIzquierdo(indice int) int {
 	posHijoIzq := 2*indice + 1
-	hijoIzq := arr[posHijoIzq]
-	return hijoIzq, posHijoIzq
+	return posHijoIzq
 }
 
-func buscoPosHijoDerecho[T any](arr []T, indice int) (T, int) {
+func buscoPosHijoDerecho(indice int) int {
 	posHijoDer := 2*indice + 2
-	hijoDer := arr[posHijoDer]
-	return hijoDer, posHijoDer
+	return posHijoDer
 }
 
 func buscoPosPadre[T any](arr []T, indice int) (T, int) {
@@ -60,23 +58,28 @@ func upHeap[T any](arr []T, cmp func(T, T) int, elem T, pos int) {
 	upHeap(arr, cmp, elem, posPadre)
 }
 
-func downHeap[T any](arr []T, cmp func(T, T) int, elem T, pos int) {
-	hijoIzquierdo, posHijoIzquierdo := buscoPosHijoIzquierdo(arr, pos)
-	hijoDerecho, posHijoDerecho := buscoPosHijoDerecho(arr, pos)
-	hijoMayor := hijoDerecho
+func downHeap[T any](arr []T, cmp func(T, T) int, elem T, pos int) { // [20, 15, 10, 13, ""]
+	posHijoIzquierdo := buscoPosHijoIzquierdo(pos)
+	posHijoDerecho := buscoPosHijoDerecho(pos)
 	posHijoMayor := posHijoDerecho
 	posDelMayor := pos
+	hijoMayor := elem
 
 	switch {
 	case posHijoIzquierdo >= len(arr):
 		return
 	case posHijoDerecho >= len(arr):
+		hijoIzquierdo := arr[posHijoIzquierdo]
 		hijoMayor = hijoIzquierdo
 		posHijoMayor = posHijoIzquierdo
 	default:
+		hijoIzquierdo := arr[posHijoIzquierdo]
+		hijoDerecho := arr[posHijoDerecho]
 		if cmp(hijoIzquierdo, hijoDerecho) > 0 {
 			hijoMayor = hijoIzquierdo
 			posHijoMayor = posHijoIzquierdo
+		} else {
+			hijoMayor = hijoDerecho
 		}
 	}
 	if cmp(hijoMayor, elem) > 0 {
