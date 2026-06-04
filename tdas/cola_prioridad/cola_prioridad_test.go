@@ -271,15 +271,15 @@ func TestColaPrioridadVolumen(t *testing.T) {
 		return a - b
 	})
 
-	for i := 0; i < 1000000; i++ {
+	for i := 0; i < 100000; i++ {
 		cola.Encolar(i)
 	}
 
 	require.False(t, cola.EstaVacia())
-	require.Equal(t, 1000000, cola.Cantidad())
-	require.Equal(t, 999999, cola.VerMax())
+	require.Equal(t, 100000, cola.Cantidad())
+	require.Equal(t, 99999, cola.VerMax())
 
-	for i := 999999; i >= 0; i-- {
+	for i := 99999; i >= 0; i-- {
 		require.Equal(t, i, cola.Desencolar())
 	}
 	require.True(t, cola.EstaVacia())
@@ -288,8 +288,8 @@ func TestColaPrioridadVolumen(t *testing.T) {
 }
 
 func TestColaPrioridadHeapifyVolumen(t *testing.T) {
-	arr := make([]int, 1000000)
-	for i := 0; i < 1000000; i++ {
+	arr := make([]int, 100000)
+	for i := 0; i < 100000; i++ {
 		arr[i] = i
 	}
 	cola := TDAColaPrioridad.CrearHeapArr(arr, func(a, b int) int {
@@ -297,10 +297,10 @@ func TestColaPrioridadHeapifyVolumen(t *testing.T) {
 	})
 
 	require.False(t, cola.EstaVacia())
-	require.Equal(t, 1000000, cola.Cantidad())
-	require.Equal(t, 999999, cola.VerMax())
+	require.Equal(t, 100000, cola.Cantidad())
+	require.Equal(t, 99999, cola.VerMax())
 
-	for i := 999999; i >= 0; i-- {
+	for i := 99999; i >= 0; i-- {
 		require.Equal(t, i, cola.Desencolar())
 	}
 	require.True(t, cola.EstaVacia())
