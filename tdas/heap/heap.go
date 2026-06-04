@@ -21,20 +21,12 @@ func CrearColaPrioridad[T any](funcion_cmp func(T, T) int) ColaPrioridad[T] {
 }
 
 func CrearHeapArr[T any](arreglo []T, funcion_cmp func(T, T) int) ColaPrioridad[T] {
-	arrAdaptado := adaptoArregloAHeap(arreglo)
-	return &heap[T]{arr: arrAdaptado, funcion_cmp: funcion_cmp}
-}
+	h := &heap[T]{arr: arreglo, funcion_cmp: funcion_cmp}
 
-func adaptoArregloAHeap[T any](arr []T) []T {
-	mitad := (0 + len(arr)) / 2
-	return _adaptoArregloAHeap(arr, 0, mitad)
-}
-
-func _adaptoArregloAHeap[T any](arr []T, inicio int, mitad int) []T {
-	if inicio != mitad {
-		downHeap(arr[mitad], mitad)
+	for i := len(h.arr)/2 - 1; i >= 0; i-- {
+		h.downHeap(h.arr[i], i)
 	}
-	return _adaptoArregloAHeap(arr, inicio, mitad-1)
+	return h
 }
 
 func (h *heap[T]) buscoPosHijoIzquierdo(indice int) (T, int) {
