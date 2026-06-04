@@ -114,10 +114,12 @@ func (h *heap[T]) Desencolar() T {
 	elemDesencolado := h.arr[PRIMER_POS]
 
 	h.swap(PRIMER_POS, posUltimoELem)
-	h.arr = h.arr[:posUltimoELem]
-
 	primerElem := h.arr[PRIMER_POS]
-	h.downHeap(primerElem, PRIMER_POS)
+
+	h.arr = h.arr[:posUltimoELem]
+	if !h.EstaVacia() {
+		h.downHeap(primerElem, PRIMER_POS)
+	}
 
 	return elemDesencolado
 }

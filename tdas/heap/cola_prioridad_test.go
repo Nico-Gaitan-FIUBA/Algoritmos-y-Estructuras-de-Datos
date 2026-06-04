@@ -73,3 +73,14 @@ func TestColaPrioridadEncolarVariosElementosDesordenados(t *testing.T) {
 	require.Equal(t, 90, cola.VerMax())
 
 }
+
+func TestColaPrioridadDesencolarUnElemento(t *testing.T) {
+	cola := CrearColaPrioridad(func(a, b int) int {
+		return a - b
+	})
+	cola.Encolar(10)
+	require.Equal(t, 10, cola.Desencolar())
+	require.True(t, cola.EstaVacia())
+	require.Equal(t, 0, cola.Cantidad())
+	require.PanicsWithValue(t, "La cola esta vacia", func() { cola.VerMax() })
+}
